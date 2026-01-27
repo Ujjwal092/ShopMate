@@ -1,10 +1,10 @@
 import dotenv from "dotenv";
-
 dotenv.config({ path: "config/config.env" });
 
 import app from "./app.js";
 import { v2 as cloudinary } from "cloudinary";
-import database from "./database/db.js";
+
+
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLIENT_NAME,

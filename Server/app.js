@@ -3,6 +3,9 @@ import { config } from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
+import { createTables } from "./utils/createTables.js";
+import {errorMiddleware} from "./middlewares/errorMiddleware.js"
+import authRouter from "./routes/authRoutes.js"
 const app = express();
 
 // Setting up config file
@@ -27,4 +30,11 @@ app.use(fileUpload({
     useTempFiles : true,
     tempFileDir : "/temp", // Directory to store temporary files
 })); 
+
+app.use("/api/v1/auth" , authRouter); //mounting
+
+createTables();
+
+app.use(errorMiddleware); // Custom error handling middleware
+
 export default app;
