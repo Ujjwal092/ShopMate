@@ -29,5 +29,7 @@ export const authorizedRoles = (...roles)=>{
         }
          next();
     }
-   
+   // eg . if our role is User that is ...roles : User and this ...role will come from controllers
+   //if ADMIN is req.user.role means req jo kr rha uskka role ADMIN hai
+   // then .includes will fails and error 403 will come
 }

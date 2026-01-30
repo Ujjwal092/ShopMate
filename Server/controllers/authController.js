@@ -7,7 +7,7 @@ import {generateResetPasswordToken} from "../utils/generateResetPasswordToken.js
 import { generateEmailTemplate } from "../utils/generateForgotPasswordEmailTemplate.js"
 import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
-import {v2 as clodinary} from "cloudinary"
+import {v2 as cloudinary} from "cloudinary"
 
 export const register = catchAsyncErrors(async(req,res,next)=>{
        
