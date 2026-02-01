@@ -2,6 +2,7 @@ import database from "../database/db.js";
 import { catchAsyncErrors } from "../middlewares/catchAsyncError.js";
 import ErrorHandler from "../middlewares/errorMiddleware.js";
 import { v2 as cloudinary } from "cloudinary";
+import {getAIRecommendation} from "../utils/getAIRecommendation.js"
 
 export const createProduct = catchAsyncErrors(async (req, res, next) => {
   const { name, description, price, category, stock } = req.body;
@@ -313,9 +314,11 @@ export const fetchSingleProduct = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+//after payment integration
 export const postProductReview = catchAsyncErrors(async (req, res, next) => {
  
   const { productId } = req.params;
+
   const { rating, comment } = req.body;
  
   if (!rating || !comment) {
@@ -341,6 +344,7 @@ export const postProductReview = catchAsyncErrors(async (req, res, next) => {
   ]);
 
   if (rows.length === 0) {
+    //as it is not a error coz not purchase is not an error so just send response
     return res.status(403).json({
       success: false,
       message: "You can only review a product you've purchased.",
@@ -350,6 +354,7 @@ export const postProductReview = catchAsyncErrors(async (req, res, next) => {
   const product = await database.query("SELECT * FROM products WHERE id = $1", [
     productId,
   ]);
+
   if (product.rows.length === 0) {
     return next(new ErrorHandler("Product not found.", 404));
   }
@@ -362,7 +367,7 @@ export const postProductReview = catchAsyncErrors(async (req, res, next) => {
   );
 
   let review;
-
+   //if already reviewd just update else insert
   if (isAlreadyReviewed.rows.length > 0) {
     review = await database.query(
       "UPDATE reviews SET rating = $1, comment = $2 WHERE product_id = $3 AND user_id = $4 RETURNING *",
@@ -371,10 +376,11 @@ export const postProductReview = catchAsyncErrors(async (req, res, next) => {
   } else {
     review = await database.query(
       "INSERT INTO reviews (product_id, user_id, rating, comment) VALUES ($1, $2, $3, $4) RETURNING *",
-      [productId, req.user.id, rating, comment]
+      [productId, req.user.id, rating, comment] //should be seq
     );
   }
-
+  
+  //all reviews of same product and take a average
   const allReviews = await database.query(
     `SELECT AVG(rating) AS avg_rating FROM reviews WHERE product_id = $1`,
     [productId]
@@ -382,6 +388,7 @@ export const postProductReview = catchAsyncErrors(async (req, res, next) => {
 
   const newAvgRating = allReviews.rows[0].avg_rating;
 
+  //update products table with new ratings on base of id of prod
   const updatedProduct = await database.query(
     `
         UPDATE products SET ratings = $1 WHERE id = $2 RETURNING *
@@ -398,23 +405,29 @@ export const postProductReview = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const deleteReview = catchAsyncErrors(async (req, res, next) => {
-  const { productId } = req.params;
-  const review = await database.query(
+ 
+    const { productId } = req.params;
+  
+    //delete review based on  id of product and user and store it in review var
+    const review = await database.query(
     "DELETE FROM reviews WHERE product_id = $1 AND user_id = $2 RETURNING *",
     [productId, req.user.id]
   );
-
+ 
+  //review is now new reviews after deleting a review
   if (review.rows.length === 0) {
     return next(new ErrorHandler("Review not found.", 404));
   }
-
+  //get avg
   const allReviews = await database.query(
     `SELECT AVG(rating) AS avg_rating FROM reviews WHERE product_id = $1`,
     [productId]
   );
 
+  //new avg 
   const newAvgRating = allReviews.rows[0].avg_rating;
 
+  //updated prod
   const updatedProduct = await database.query(
     `
         UPDATE products SET ratings = $1 WHERE id = $2 RETURNING *
@@ -432,11 +445,14 @@ export const deleteReview = catchAsyncErrors(async (req, res, next) => {
 
 export const fetchAIFilteredProducts = catchAsyncErrors(
   async (req, res, next) => {
+
     const { userPrompt } = req.body;
+
+    //400 bad req
     if (!userPrompt) {
       return next(new ErrorHandler("Provide a valid prompt.", 400));
     }
-
+ //I need a Book here I and a is stop Word
     const filterKeywords = (query) => {
       const stopWords = new Set([
         "the",
@@ -520,12 +536,13 @@ export const fetchAIFilteredProducts = catchAsyncErrors(
       return query
         .toLowerCase()
         .replace(/[^\w\s]/g, "")
-        .split(/\s+/)
-        .filter((word) => !stopWords.has(word))
-        .map((word) => `%${word}%`);
+        .split(/\s+/) //split on based of space
+        .filter((word) => !stopWords.has(word)) //remove stop words
+        .map((word) => `%${word}%`); //%% is used to convert word into sql query
     };
 
-    const keywords = filterKeywords(userPrompt);
+    const keywords = filterKeywords(userPrompt); //userPrompt is sending as query inside filterKeywords method
+
     // STEP 1: Basic SQL Filtering
     const result = await database.query(
       `
@@ -535,6 +552,7 @@ export const fetchAIFilteredProducts = catchAsyncErrors(
         OR category ILIKE ANY($1)
         LIMIT 200;     
         `,
+        //200 is word limit of prompt
       [keywords]
     );
 
@@ -548,7 +566,7 @@ export const fetchAIFilteredProducts = catchAsyncErrors(
       });
     }
 
-    // STEP 2: AI FILTERING
+    // STEP 2: AI FILTERING here we r calling fn
     const { success, products } = await getAIRecommendation(
       req,
       res,
