@@ -33,7 +33,7 @@ app.use(fileUpload({
 })); 
 
 app.use("/api/v1/auth" , authRouter); //mounting
-app.use("/api/v1/product",productRoutes)
+app.use("/api/v1/product",productRoutes);
 
 createTables();
 
