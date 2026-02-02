@@ -99,13 +99,15 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
   const orderStatusCountsQuery = await database.query(`
       SELECT order_status, COUNT(*) FROM orders WHERE paid_at IS NOT NULL GROUP BY order_status
       `);
-
+ 
+    //initial VALUE
   const orderStatusCounts = {
     Processing: 0,
     Shipped: 0,
     Delivered: 0,
     Cancelled: 0,
   };
+
   orderStatusCountsQuery.rows.forEach((row) => {
     orderStatusCounts[row.order_status] = parseInt(row.count);
   });
@@ -117,14 +119,15 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
     `,
     [todayDate]
   );
+
   const todayRevenue = parseFloat(todayRevenueQuery.rows[0].sum) || 0;
 
-  // Yesterday's Revenue
+  // Yesterday's Revenue only todayDate-> yesterdayDate
   const yesterdayRevenueQuery = await database.query(
     `
     SELECT SUM(total_price) FROM orders WHERE created_at::date = $1 AND paid_at IS NOT NULL  
     `,
-    [yesterdayDate]
+    [yesterdayDate] 
   );
   const yesterdayRevenue = parseFloat(yesterdayRevenueQuery.rows[0].sum) || 0;
 
@@ -180,6 +183,7 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
         SELECT name, stock FROM products WHERE stock <= 5 
       `);
 
+      //if we want all data the . else rows[0] method
   const lowStockProducts = lowStockProductsQuery.rows;
 
   // Revenue Growth Rate (%)
@@ -199,8 +203,8 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
   if (lastMonthRevenue > 0) {
     const growthRate =
       ((currentMonthSales - lastMonthRevenue) / lastMonthRevenue) * 100;
-    revenueGrowth = `${growthRate >= 0 ? "+" : ""}${growthRate.toFixed(2)}%`;
-  }
+    revenueGrowth = `${growthRate >= 0 ? "+" : ""}${growthRate.toFixed(2)}%`; //if growth rate is >0 then + else empty
+  } //2 is 2 digits
 
   // New Users This Month
   const newUsersThisMonthQuery = await database.query(
