@@ -5,8 +5,11 @@ import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import { createTables } from "./utils/createTables.js";
 import {errorMiddleware} from "./middlewares/errorMiddleware.js"
+
 import authRouter from "./routes/authRoutes.js"
 import productRoutes  from "./routes/productRoutes.js"
+import adminRoutes from "./routes/adminRoutes.js"
+
 const app = express();
 
 // Setting up config file
@@ -34,6 +37,7 @@ app.use(fileUpload({
 
 app.use("/api/v1/auth" , authRouter); //mounting
 app.use("/api/v1/product",productRoutes);
+app.use("/api/v1/admin",adminRoutes);
 
 createTables();
 
