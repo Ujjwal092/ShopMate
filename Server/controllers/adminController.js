@@ -57,8 +57,8 @@ export const deleteUser = catchAsyncErrors(async (req, res, next) => {
 export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
   
   const today = new Date(); //2026-02-02T14:58:17.250Z format
-  console.log(today)
-  const todayDate = today.toISOString().split("T")[0]; //
+ // console.log(today)
+  const todayDate = today.toISOString().split("T")[0]; // T se phle wla 0 index pr hai 
 
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1); //todays date-1
@@ -132,7 +132,9 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
   const yesterdayRevenue = parseFloat(yesterdayRevenueQuery.rows[0].sum) || 0;
 
   //Monthly Sales For Line Chart
-  const monthlySalesQuery = await database.query(`
+  const monthlySalesQuery = await database.query(
+    //Mon is month yyyy => Feb 2026
+    `
     SELECT
     TO_CHAR(created_at, 'Mon YYYY') AS month,
     DATE_TRUNC('month', created_at) as date,
