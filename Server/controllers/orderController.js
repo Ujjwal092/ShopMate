@@ -31,7 +31,8 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
 
   const items = Array.isArray(orderedItems) //orderedItems is array or not
     ? orderedItems //if yes
-    : JSON.parse(orderedItems); //if no
+    : JSON.parse(orderedItems); //if no  and from frontend stringify ke form m aayega
+    //parse is done for map method use
   
     //if no item placed
   if (!items || items.length === 0) {
@@ -258,7 +259,9 @@ GROUP BY o.id, s.id
 });
 
 export const updateOrderStatus = catchAsyncErrors(async (req, res, next) => {
+ 
   const { status } = req.body;
+  
   if (!status) {
     return next(new ErrorHandler("Provide a valid status for order.", 400));
   }
