@@ -6,6 +6,7 @@ import database  from "../database/db.js";
 //authentication
 export const isAuthenticated = catchAsyncErrors(async (req,res,next) => {
     const { token } = req.cookies; //token req ki cookie m pada hoga
+   // console.log("Token in authMiddleware:", token); // Debugging line to check the token value 
     if(!token){
         return next(new ErrorHandler("Please login to access this resource",401));
     }

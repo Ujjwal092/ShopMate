@@ -19,6 +19,8 @@ config({ path: "./config/config.env" });
 
 // Middleware to parse JSON requests
 app.use(express.json());
+app.use(cookieParser()); // Middleware to parse cookies and cookies are small pieces of data stored on the client side
+app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-encoded data like data is in which format
 
 //CORS IS used to allow requests from frontend and dashboard
 app.use(cors({
@@ -93,9 +95,6 @@ app.post(
   }
 );
 
-app.use(cookieParser()); // Middleware to parse cookies and cookies are small pieces of data stored on the client side
-app.use(express.json()); // Middleware to parse JSON data from requests
-app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-encoded data like data is in which format
 
 // Middleware to handle file uploads
 app.use(fileUpload({
