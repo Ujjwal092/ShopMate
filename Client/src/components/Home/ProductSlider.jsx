@@ -59,8 +59,7 @@ const ProductSlider = ({ title, products }) => {
                 {/* PRODUCT IMAGE */}
                 <div className="relative overflow-hidden rounded-lg mb-4">
                   <img
-                    src={product.images[0].url}
-                    alt={product.name}
+                     src={product.images?.[0]?.url || "/placeholder.png"} // fallback
                     className="w-full h-48 object-contain group-hover:scale-110 transition-transform duration-300"
                   />
 

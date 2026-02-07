@@ -8,31 +8,31 @@ import { loadStripe } from "@stripe/stripe-js";
 import { placeOrder } from "../store/slices/orderSlice";
 
 const Payment = () => {
-  const { authUser } = useSelector((state) => state.auth);
-  const navigateTo = useNavigate();
-  if (!authUser) return navigateTo("/products");
-
   const [stripePromise, setStripePromise] = useState(null);
+  const navigateTo = useNavigate();
+  const dispatch = useDispatch();
+  const { authUser } = useSelector((state) => state.auth);
+  const { cart } = useSelector((state) => state.cart);
+  const { orderStep } = useSelector((state) => state.order);
+  const [shippingDetails, setShippingDetails] = useState({
+    fullName: "",
+    state: "Bengaluru",
+    phone: "",
+    address: "",
+    city: "",
+    zipCode: "",
+    country: "India",
+  });
+
   useEffect(() => {
     loadStripe(
-      "pk_test_51PVw62JBUE6JIzh6vJeSuOTQzvct7mWyfRlDBzRvyeTtm4t6N4KFUb0EEQLWawlElLW2SdBd8Rr0TM9dLy7JvJDQ00ZG68Ysju"
+      "pk_test_51SwRXIF1eM3Ub3VgT0NlO1kvJ9q0CW9OOZUDyMUMRh5kdcxK1fA1qrgNmZIPwGShvQnjGvsmWwq4oEI3Q7VnDnuh00YGWkX8dI"
     )
       .then((stripe) => setStripePromise(stripe))
       .catch((err) => console.log(err));
   }, []);
 
-  const dispatch = useDispatch();
-  const { cart } = useSelector((state) => state.cart);
-  const { orderStep } = useSelector((state) => state.order);
-  const [shippingDetails, setShippingDetails] = useState({
-    fullName: "",
-    state: "Karachi",
-    phone: "",
-    address: "",
-    city: "",
-    zipCode: "",
-    country: "Pakistan",
-  });
+  if (!authUser) return navigateTo("/products");
 
   const total = cart.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
@@ -188,10 +188,10 @@ const Payment = () => {
                           }}
                           className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground"
                         >
-                          <option value="Karachi">Karachi</option>
-                          <option value="Punjab">Punjab</option>
-                          <option value="Sindh">Sindh</option>
-                          <option value="Balochistan">Balochistan</option>
+                          <option value="Karachi">Delhi</option>
+                          <option value="Punjab">Banglore</option>
+                          <option value="Sindh">Bombay</option>
+                          <option value="Balochistan">Karnataka</option>
                           <option value="Khyber PakhtunKhwa (KPK)">
                             Khyber PakhtunKhwa (KPK)
                           </option>
@@ -294,7 +294,7 @@ const Payment = () => {
                           }}
                           className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground"
                         >
-                          <option value="Pakistan">Pakistan</option>
+                          <option value="India">India</option>
                         </select>
                       </div>
                     </div>
@@ -305,6 +305,7 @@ const Payment = () => {
                     >
                       Continue to Payment
                     </button>
+
                   </form>
                 ) : (
                   <>
@@ -330,7 +331,7 @@ const Payment = () => {
                           className="flex items-center space-x-3"
                         >
                           <img
-                            src={item.product.images[0].url}
+                            src={item.product?.images[0]?.url}
                             alt={item.product.name}
                             className="w-12 h-12 object-cover rounded"
                           />

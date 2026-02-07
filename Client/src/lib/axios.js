@@ -7,3 +7,4 @@ export const axiosInstance = axios.create({
   :"/",
   withCredentials: true,
 });
+//console.log("Axios base URL:", axiosInstance.defaults.baseURL);

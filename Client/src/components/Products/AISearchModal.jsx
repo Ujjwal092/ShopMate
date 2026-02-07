@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { X, Search, Sparkles } from "lucide-react";
-import axios from "axios";
+
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductWithAI } from "../../store/slices/productSlice";
 import { toggleAIModal } from "../../store/slices/popupSlice";

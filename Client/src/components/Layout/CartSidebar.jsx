@@ -10,6 +10,7 @@ import { toggleCart } from "../../store/slices/popupSlice";
 const CartSidebar = () => {
   const dispatch = useDispatch();
   const { isCartOpen } = useSelector((state) => state.popup);
+
   const { cart } = useSelector((state) => state.cart);
 
   const updateQuantity = (id, quantity) => {
@@ -28,7 +29,7 @@ const CartSidebar = () => {
     );
   }
 
-  if (!isCartOpen) return null;
+  if (!isCartOpen) return null; // Don't render anything if cart is not open
 
   return (
     <>
@@ -72,7 +73,7 @@ const CartSidebar = () => {
                       <div key={item.product.id} className="glass-card p-4">
                         <div className="flex items-start space-x-4">
                           <img
-                            src={item.product.images[0].url}
+                            src={item.product?.images[0]?.url} //error
                             alt={item.product.name}
                             className="w-16 h-16 object-cover rounded-lg"
                           />
@@ -86,11 +87,12 @@ const CartSidebar = () => {
                             {/* Quantity Controls */}
 
                             <div className="flex items-center space-x-2 mt-2">
+                            {/**button on click reduce cart item by 1 */}
                               <button
                                 className="p-1 rounded glass-card hover:glow-on-hover animate-smooth"
                                 onClick={() => {
                                   updateQuantity(
-                                    item.product.id,
+                                    item.product.id, 
                                     item.quantity - 1
                                   );
                                 }}

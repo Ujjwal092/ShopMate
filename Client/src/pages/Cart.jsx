@@ -75,7 +75,7 @@ const Cart = () => {
                         className="flex-shrink-0"
                       >
                         <img
-                          src={item.product.images[0].url}
+                          src={item.product?.images[0]?.url}
                           alt={item.product.name}
                           className="w-24 h-24 object-cover rounded-lg hover:scale-105 transition-transform"
                         />
@@ -195,6 +195,7 @@ const Cart = () => {
                 >
                   Continue Shopping
                 </Link>
+                
               </div>
             </div>
           </div>

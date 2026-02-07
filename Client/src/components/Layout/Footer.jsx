@@ -8,8 +8,11 @@ import {
   Instagram,
   Youtube,
 } from "lucide-react";
+import { useTheme } from "../../contexts/ThemeContext";
 
 const Footer = () => {
+  const { theme } = useTheme();
+
   const footerLinks = {
     company: [
       { name: "About Us", path: "/about" },
@@ -38,139 +41,106 @@ const Footer = () => {
     { icon: Youtube, href: "#", label: "YouTube" },
   ];
 
+  const bgClass = theme === "dark" ? "bg-background/80 backdrop-blur-md" : "bg-white/95 backdrop-blur-sm shadow-inner";
+  const textClass = theme === "dark" ? "text-foreground" : "text-gray-900";
+  const mutedClass = theme === "dark" ? "text-muted-foreground" : "text-gray-600";
+  const borderClass = theme === "dark" ? "border-[hsla(var(--glass-border))]" : "border-gray-200";
+
   return (
-    <footer className="glass border-t border-[hsla(var(--glass-border))] mt-16">
+    <footer className={`${bgClass} border-t ${borderClass} mt-16 transition-colors duration-300`}>
       <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        {/* Top Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12 ml-[4rem]">
           {/* Brand & Contact */}
-          <div className="lg:col-span-1">
-            <h2 className="text-2xl font-bold gradient-primary bg-clip-text text-transparent mb-4">
+          <div className="lg:col-span-1 space-y-4">
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text hover:scale-105 transition-transform duration-300">
               ShopMate
             </h2>
-            <p className="text-muted-foreground mb-6">
-              Your trusted partner for online shopping. Discover amazing
-              products with exceptional quality and service.
+            <p className={`${mutedClass} text-sm`}>
+              Your trusted partner for online shopping. Discover amazing products with exceptional quality and service.
             </p>
-            <div className="space-y-3">
-              <div className="flex items-center space-x-3 text-muted-foreground">
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center space-x-2">
                 <Mail className="w-5 h-5 text-primary" />
-                <span>support@shopmate.com</span>
+                <span className={mutedClass}>shopmate@gmail.com</span>
               </div>
-              <div className="flex items-center space-x-3 text-muted-foreground">
+              <div className="flex items-center space-x-2">
                 <Phone className="w-5 h-5 text-primary" />
-                <span>+1 (555) 123-4567</span>
+                <span className={mutedClass}>+91 7079839554</span>
               </div>
-              <div className="flex items-center space-x-3 text-muted-foreground">
+              <div className="flex items-center space-x-2">
                 <MapPin className="w-5 h-5 text-primary" />
-                <span>San Francisco, CA</span>
+                <span className={mutedClass}>Bengaluru,India</span>
               </div>
             </div>
           </div>
 
           {/* Company Links */}
-          <div>
-            <h3 className="text-lg font-semibold text-foreground mb-4">
-              Company
-            </h3>
-            <ul className="space-y-2">
-              {footerLinks.company.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    to={link.path}
-                    className="text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Customer Service */}
-          <div>
-            <h3 className="text-lg font-semibold text-foreground mb-4">
-              Customer Service
-            </h3>
-            <ul className="space-y-2">
-              {footerLinks.customer.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    to={link.path}
-                    className="text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h3 className="text-lg font-semibold text-foreground mb-4">
-              Legal
-            </h3>
-            <ul className="space-y-2">
-              {footerLinks.legal.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    to={link.path}
-                    className="text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {["company", "customer", "legal"].map((section) => (
+            <div key={section}>
+              <h3 className={`text-lg font-semibold ${textClass} mb-4 capitalize`}>
+                {section.replace("-", " ")}
+              </h3>
+              <ul className="space-y-2">
+                {footerLinks[section].map((link) => (
+                  <li key={link.name}>
+                    <Link
+                      to={link.path}
+                      className={`${mutedClass} hover:text-primary transition-colors duration-300`}
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        {/* Newsletter Signup */}
-        <div className="glass-panel mb-12">
-          <div className="text-center mb-6">
-            <h3 className="text-xl font-semibold text-foreground mb-2">
-              Stay Connected
-            </h3>
-            <p className="text-muted-foreground">
-              Subscribe to our newsletter for exclusive offers and updates
+        {/* Newsletter */}
+        <div className="bg-secondary rounded-2xl p-8 mb-12 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-center sm:text-left mb-4 sm:mb-0">
+            <h3 className={`text-xl font-semibold ${textClass} mb-2`}>Stay Connected</h3>
+            <p className={`${mutedClass} text-sm`}>
+              Subscribe to our newsletter for exclusive offers and updates  💜
             </p>
           </div>
-          <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+          <form className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 px-4 py-3 bg-secondary border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground placeholder-muted-foreground"
+              className="px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground placeholder-muted-foreground flex-1"
             />
             <button
               type="submit"
-              className="px-6 py-3 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-semibold"
+              className="px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:scale-105 transition-transform duration-300 font-semibold shadow-lg"
             >
               Subscribe
             </button>
           </form>
         </div>
 
-        {/* Social Links & Copyright */}
-        <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-[hsla(var(--glass-border))]">
+        {/* Social & Copyright */}
+        <div className={`flex flex-col md:flex-row items-center justify-between pt-8 border-t ${borderClass}`}>
           <div className="flex items-center space-x-4 mb-4 md:mb-0">
             {socialLinks.map((social) => (
               <a
                 key={social.label}
                 href={social.href}
                 aria-label={social.label}
-                className="p-2 glass-card hover:glow-on-hover animate-smooth"
+                className="p-2 rounded-full bg-secondary  hover:text-white duration-300 transform hover:scale-110"
               >
-                <social.icon className="w-5 h-5 text-primary" />
+                <social.icon className="w-5 h-5" />
               </a>
             ))}
           </div>
 
-          <div className="text-center md:text-right">
-            <p className="text-muted-foreground text-sm">
-              © 2024 ShopMate. All rights reserved.
+          <div className="text-center md:text-right space-y-1">
+            <p className={`${mutedClass} text-sm`}>
+              © 2024 ShopMate. All rights reserved.𑣲
             </p>
-            <p className="text-muted-foreground text-xs mt-1">
-              Developed By CodeWithZeeshu
+            <p className={`${mutedClass} text-xs`}>
+              Developed By Ujjwal Kumar
             </p>
           </div>
         </div>

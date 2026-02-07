@@ -1,4 +1,7 @@
+import jwt from "jsonwebtoken";
+
 export const sendToken = (user, statusCode, message, res) => {
+
   const token = jwt.sign(
     { id: user.id },
     process.env.JWT_SECRET_KEY,
