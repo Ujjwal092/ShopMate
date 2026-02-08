@@ -9,20 +9,25 @@ import { toggleCart } from "../../store/slices/popupSlice";
 
 const CartSidebar = () => {
   const dispatch = useDispatch();
-  const { isCartOpen } = useSelector((state) => state.popup);
+  const { isCartOpen } = useSelector((state) => state.popup); // Get cart sidebar visibility state from Redux
 
   const { cart } = useSelector((state) => state.cart);
 
   const updateQuantity = (id, quantity) => {
-    if (quantity <= 0) {
-      dispatch(removeFromCart(id));
+    if (quantity < 1) {
+      dispatch(removeFromCart(id)); //if quantity is 0 or less than 0 remove the item from cart
+      //  else update the cart quantity with new quantity
     } else {
       dispatch(updateCartQuantity({ id, quantity }));
     }
   };
 
   let total = 0;
-  if (cart) {
+  if (cart) { //reduce method is used in array having two
+  //  parameters one is a callback function and other is initial value of sum which is 0 in this case.
+  //  callback function takes two parameters sum and item. sum is the accumulated value and item is the current item in the array.
+  //  The callback function adds the price of the current item multiplied by its quantity to the accumulated sum and returns it.
+  //  This way, we get the total price of all items in the cart.
     total = cart.reduce(
       (sum, item) => sum + item.product.price * item.quantity,
       0
@@ -33,7 +38,7 @@ const CartSidebar = () => {
 
   return (
     <>
-      {/* OVERLAY */}
+     { /*Overlay to close cart when clicking outside of it */  }
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
         onClick={() => dispatch(toggleCart())}
@@ -42,16 +47,20 @@ const CartSidebar = () => {
       {/* CART SIDEBAR */}
       <div className="fixed right-0 top-0 h-full w-96 z-50 glass-panel animate-slide-in-right overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-[hsla(var(--glass-border))]">
-          <h2 className="text-xl font-semibold text-primary">Shopping Cart</h2>
+          <h2 className="text-xl font-semibold text-primary">Shopping Cart </h2>
+        
+        {/**button to close cart sidebar */}
           <button
             onClick={() => dispatch(toggleCart())}
             className="p-2 rounded-lg glass-card hover:glow-on-hover animate-smooth"
           >
             <X className="w-5 h-5 text-primary" />
           </button>
-        </div>
 
+        </div>
+      {/* CART CONTENT if cart is empty then browse user to product page else show item*/}
         <div className="p-6">
+          
           {cart && cart.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-muted-foreground">Your cart is empty.</p>
@@ -65,7 +74,7 @@ const CartSidebar = () => {
             </div>
           ) : (
             <>
-              {/* CART ITEMS */}
+              {/* CART ITEMS detail */}
               <div className="space-y-4 mb-6">
                 {cart &&
                   cart.map((item) => {
@@ -77,6 +86,7 @@ const CartSidebar = () => {
                             alt={item.product.name}
                             className="w-16 h-16 object-cover rounded-lg"
                           />
+
                           <div className="flex-1 min-w-0">
                             <h3 className="font-semibold text-foreground truncate">
                               {item.product.name}
@@ -87,7 +97,8 @@ const CartSidebar = () => {
                             {/* Quantity Controls */}
 
                             <div className="flex items-center space-x-2 mt-2">
-                            {/**button on click reduce cart item by 1 */}
+                           
+                            {/**button on click reduce cart item by 1 */}  
                               <button
                                 className="p-1 rounded glass-card hover:glow-on-hover animate-smooth"
                                 onClick={() => {
@@ -96,13 +107,17 @@ const CartSidebar = () => {
                                     item.quantity - 1
                                   );
                                 }}
-                                disabled={item.quantity === 1}
+                                disabled={item.quantity === 1} // Disable the button if quantity is 1 to prevent going to 0 or negative
                               >
                                 <Minus className="w-4 h-4" />
                               </button>
+
+                            {/**span to show quantity of item in cart */}
                               <span className="w-8 text-center font-semibold">
                                 {item.quantity}
                               </span>
+
+                              {/**button on click increase cart item by 1 */}
                               <button
                                 className="p-1 rounded glass-card hover:glow-on-hover animate-smooth"
                                 onClick={() => {
@@ -115,16 +130,18 @@ const CartSidebar = () => {
                                 <Plus className="w-4 h-4" />
                               </button>
 
+                               {/**button to remove item from cart text-destructive red color*/} 
                               <button
                                 className="p-1 rounded glass-card hover:glow-on-hover animate-smooth ml-2 text-destructive"
                                 onClick={() => {
                                   dispatch(removeFromCart(item.product.id));
                                 }}
-                              >
+                              > 
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             </div>
                           </div>
+
                         </div>
                       </div>
                     );
@@ -136,7 +153,7 @@ const CartSidebar = () => {
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-lg font-semibold">Total:</span>
                   <span className="text-xl font-bold text-primary">
-                    ${total.toFixed(2)}
+                    ${total.toFixed(2)} {/* toFixed(2) is used to show only 2 decimal places in total price */}
                   </span>
                 </div>
 

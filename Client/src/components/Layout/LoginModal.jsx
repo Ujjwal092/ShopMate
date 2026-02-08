@@ -17,9 +17,10 @@ const LoginModal = () => {
 
   const { authUser, isSigningUp, isLoggingIn, isRequestingForToken } =
     useSelector((state) => state.auth);
+    
   const { isAuthPopupOpen } = useSelector((state) => state.popup);
 
-  const [mode, setMode] = useState("signin"); // signin | signup | forgot | reset
+  const [mode, setMode] = useState("signin"); // signin | signup | forgot | reset is mode
   const [formData, setFormData] = useState({
     name: "",
     email: "",

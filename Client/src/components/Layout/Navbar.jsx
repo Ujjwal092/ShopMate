@@ -33,7 +33,7 @@ const Navbar = () => {
           {/* CENTER - LOGO */}
           <Link
             to="/"
-            className="text-2xl font-bold bg-clip-text text-transparent content-center bg-gradient-to-r from-purple-500 to-blue-500 hover:scale-105 transition-transform duration-300"
+            className="text-2xl  font-bold bg-clip-text text-transparent  bg-gradient-to-r from-purple-500 to-blue-500 hover:scale-105 transition-transform duration-300"
           >
             ShopMate
           </Link>

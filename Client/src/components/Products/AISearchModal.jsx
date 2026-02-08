@@ -44,7 +44,7 @@ z-50 flex items-center justify-center p-4"
             </div>
 
             <h2 className="text-2xl font-bold text-foreground">
-              AI Product Search
+              AI Shopee!
             </h2>
           </div>
           <button
