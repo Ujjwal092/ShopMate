@@ -166,7 +166,7 @@ const ProfilePanel = () => {
 
             <input
             // The type of the password fields toggles between "text" and "password" based on the showPassword state, allowing users to see or hide their password inputs.
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? "password" : "password"}
               placeholder="Current Password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
@@ -176,9 +176,11 @@ const ProfilePanel = () => {
             <input
               type={showPassword ? "text" : "password"}
               placeholder="New Password"
+              
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               className="w-full p-2 rounded border border-border bg-secondary text-foreground"
+              required
             />
 
             <input

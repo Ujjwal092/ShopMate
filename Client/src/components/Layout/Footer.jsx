@@ -35,10 +35,10 @@ const Footer = () => {
   };
 
   const socialLinks = [
-    { icon: Facebook, href: "#", label: "Facebook" },
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Youtube, href: "#", label: "YouTube" },
+    { icon: Facebook, href: "#", label: "Facebook", className: "bg-blue-600 hover:bg-blue-700" },
+    { icon: Twitter, href: "#", label: "Twitter", className: "bg-blue-400 hover:bg-blue-500" },
+    { icon: Instagram, href: "#", label: "Instagram", className: "bg-pink-500 hover:bg-pink-600" },
+    { icon: Youtube, href: "#", label: "YouTube", className: "bg-red-600 hover:bg-red-700" },
   ];
 
   const bgClass = theme === "dark" ? "bg-background/80 backdrop-blur-md" : "bg-white/95 backdrop-blur-sm shadow-inner";
@@ -128,7 +128,7 @@ const Footer = () => {
                 key={social.label}
                 href={social.href}
                 aria-label={social.label}
-                className="p-2 rounded-full bg-secondary  hover:text-white duration-300 transform hover:scale-110"
+                className={`p-2 rounded-full ${social.className} hover:text-white  duration-300 transform hover:scale-110`}
               >
                 <social.icon className="w-5 h-5" />
               </a>
@@ -136,10 +136,10 @@ const Footer = () => {
           </div>
 
           <div className="text-center md:text-right space-y-1">
-            <p className={`${mutedClass} text-sm`}>
-              © 2024 ShopMate. All rights reserved.𑣲
+            <p className={`${mutedClass} text-sm font-medium`}>
+              © 2026 CartSyy. All rights reserved𑣲
             </p>
-            <p className={`${mutedClass} text-xs`}>
+            <p className={`${mutedClass} text-xs italic`}>
               Developed By Ujjwal Kumar
             </p>
           </div>

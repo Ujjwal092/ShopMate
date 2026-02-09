@@ -30,15 +30,18 @@ const LoginModal = () => {
 
   // Open reset mode if URL indicates
   useEffect(() => {
-  if (location.pathname.startsWith("/password/reset/")) {
+  if (location.pathname.startsWith("/password/reset/")) 
+    // Returns true if the sequence of elements of searchString converted to a 
+    //String is the same as the corresponding elements of this object (converted to a String) starting at position. Otherwise returns false.
+     {
     const timer = setTimeout(() => {
-      setMode("reset");
-      dispatch(toggleAuthPopup());
+      setMode("reset"); // Switch to reset mode if URL indicates
+      dispatch(toggleAuthPopup()); // Open the modal of reset password
     }, 0);
 
-    return () => clearTimeout(timer);
+    return () => clearTimeout(timer); // Cleanup timeout on unmount
   }
-}, [location.pathname, dispatch]);
+}, [location.pathname, dispatch]); // This effect runs on component mount and whenever the URL path changes. If the path indicates a password reset, it opens the modal in reset mode.
 
 
   const handleInputChange = (field) => (e) => {
@@ -51,7 +54,7 @@ const LoginModal = () => {
     if (mode === "forgot") {
       dispatch(forgotPassword({ email: formData.email })).then(() => {
         toast.success("Password reset email sent!");
-        dispatch(toggleAuthPopup());
+        dispatch(toggleAuthPopup()); // Close the modal after requesting password reset
         setMode("signin");
         setFormData({ email: "", password: "", name: "", confirmPassword: "" });
       });
@@ -76,7 +79,7 @@ const LoginModal = () => {
     if (mode === "signup") data.append("name", formData.name);
 
     if (mode === "signup") {
-      dispatch(register(data));
+      dispatch(register(data)); // Register action is dispatched with form data when in signup mode
     } else {
       dispatch(login(data));
     }
@@ -108,11 +111,12 @@ const LoginModal = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* OVERLAY */}
+      {/* OVERLAY self closing div*/}
       <div className="absolute inset-0 backdrop-blur-md bg-[hsla(var(--glass-bg))]" />
 
       <div className="relative z-10 glass-panel w-full max-w-md mx-4 animate-fade-in-up p-6">
-        {/* HEADER */}
+       
+        {/* HEADER of modal */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-primary">
             {mode === "reset"
