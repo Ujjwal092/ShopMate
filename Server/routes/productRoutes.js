@@ -2,12 +2,14 @@ import express from "express";
 import {
   createProduct,
    fetchAllProducts,
+   addProductInBulk,
    updateProduct,
   deleteProduct,
   fetchSingleProduct,
   postProductReview,
   deleteReview,
   fetchAIFilteredProducts,
+
 } from "../controllers/productController.js";
 import {
   authorizedRoles,
@@ -23,8 +25,10 @@ router.post(
   authorizedRoles("Admin"),
   createProduct
 );
+
  router.get("/", fetchAllProducts);
-router.get("/singleProduct/:productId", fetchSingleProduct);
+ router.post( "/admin/bulkupload", isAuthenticated, authorizedRoles("Admin"), addProductInBulk);
+ router.get("/singleProduct/:productId", fetchSingleProduct);
 router.put("/post-new/review/:productId", isAuthenticated, postProductReview);
 router.delete("/delete/review/:productId", isAuthenticated, deleteReview);
 

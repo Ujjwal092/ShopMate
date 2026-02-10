@@ -16,8 +16,10 @@ const Index = () => {
       <Snowfall snowflakeCount={200} />
     
       <HeroSlider />
+      
       <div className="container mx-auto px-4 pt-20">
         <CategoryGrid />
+
         {newProducts.length > 0 && (
           <ProductSlider title="New Arrivals" products={newProducts} />
         )}

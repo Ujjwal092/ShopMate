@@ -54,7 +54,7 @@ const Footer = () => {
           {/* Brand & Contact */}
           <div className="lg:col-span-1 space-y-4">
             <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-500 to-blue-500 text-transparent bg-clip-text hover:scale-105 transition-transform duration-300">
-              ShopMate
+              CartSyy
             </h2>
             <p className={`${mutedClass} text-sm`}>
               Your trusted partner for online shopping. Discover amazing products with exceptional quality and service.

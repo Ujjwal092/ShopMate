@@ -1,0 +1,19 @@
+.Toastify__toast {
+  background: #020617 !important;
+  color: #f8fafc !important;
+  border-radius: 12px;
+  height: auto;
+  font-weight: 600;
+}
+
+.Toastify__toast--success {
+  border-left: 4px solid #22c55e;
+}
+
+.Toastify__toast--error {
+  border-left: 4px solid #ef4444;
+}
+
+.Toastify__progress-bar {
+  background: #22c55e !important;
+}

@@ -18,7 +18,9 @@ export const fetchAllProducts = createAsyncThunk(
     thunkAPI
   ) => {
     try {
-      const params = new URLSearchParams();
+      const params = new URLSearchParams(); //URLSearchParams is a built-in JavaScript class that provides an easy way to create and manipulate query strings for URLs. 
+      // In this code, we use it to construct the query parameters for the API request based on the provided filters (category, price, search, ratings, availability, and page)
+      // . We append each filter to the params object only if it has a value, ensuring that we only include relevant parameters in the API request.
 
       if (category) params.append("category", category);
       if (price) params.append("price", price);
@@ -44,7 +46,8 @@ export const fetchProductDetails = createAsyncThunk(
       console.log("PRODUCT DETAILS FETCHING");
       console.log(id);
       const res = await axiosInstance.get(`/product/singleProduct/${id}`);
-      console.log(res);
+      console.log(res);//res is the response from the backend after fetching the product details.
+      //  It contains the product information, including reviews, which is then stored in the Redux state for use in the product detail page.
       return res.data.product;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -131,7 +134,8 @@ const productSlice = createSlice({
     productReviews: [],
   },
   extraReducers: (builder) => {
-    builder
+    builder 
+    //for all prducts fetching, product details fetching, posting review, deleting review, and AI-based product fetching, we handle the pending, fulfilled, and rejected states to update the Redux state accordingly. This includes setting loading states, updating product lists and details, managing reviews, and handling errors with toast notifications.
       .addCase(fetchAllProducts.pending, (state) => {
         state.loading = true;
       })
@@ -145,17 +149,22 @@ const productSlice = createSlice({
       .addCase(fetchAllProducts.rejected, (state) => {
         state.loading = false;
       })
+
+      //fetching single product details along with its reviews and storing them in the Redux state for use in the product detail page.
       .addCase(fetchProductDetails.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchProductDetails.fulfilled, (state, action) => {
         state.loading = false;
-        state.productDetails = action.payload;
+        state.productDetails = action.payload; //payload contains the product details returned from the backend, 
+        // which we store in the Redux state above  for use in the product detail page.
         state.productReviews = action.payload.reviews;
       })
       .addCase(fetchProductDetails.rejected, (state) => {
         state.loading = false;
       })
+
+      // For posting a review, we manage the loading state while the review is being posted. Upon successful posting, we check if the user has already reviewed the product. If they have, we update their existing review; if not, we add the new review to the list of reviews in the Redux state. We also handle errors by showing toast notifications.
       .addCase(postReview.pending, (state) => {
         state.isPostingReview = true;
       })
@@ -168,6 +177,7 @@ const productSlice = createSlice({
           (rev) => rev.reviewer?.id === newReview.user_id
         );
 
+// If the user has already reviewed, update the existing review. Otherwise, add the new review to the list of reviews in the Redux state.
         if (existingReviewIndex !== -1) {
           state.productReviews[existingReviewIndex].rating = Number(
             newReview.rating
@@ -190,6 +200,8 @@ const productSlice = createSlice({
       .addCase(postReview.rejected, (state) => {
         state.isPostingReview = false;
       })
+
+      // For deleting a review, we manage the loading state while the review is being deleted. Upon successful deletion, we filter out the deleted review from the list of reviews in the Redux state. We also handle errors by showing toast notifications.
       .addCase(deleteReview.pending, (state) => {
         state.isReviewDeleting = true;
       })
@@ -202,6 +214,8 @@ const productSlice = createSlice({
       .addCase(deleteReview.rejected, (state) => {
         state.isReviewDeleting = false;
       })
+
+      // For AI-based product fetching, we manage the loading state while the AI search is being performed. Upon successful fetching, we update the products list and total products count in the Redux state with the results returned from the AI search. We also handle errors by showing toast notifications.
       .addCase(fetchProductWithAI.pending, (state) => {
         state.aiSearching = true;
       })

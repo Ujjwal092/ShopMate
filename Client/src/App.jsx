@@ -1,6 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./toast.css";
+import Chatbot from "../src/components/Layout/Chatbot"
+
+
 
 
 // Layout Components
@@ -87,8 +92,23 @@ const App = () => {
               <Route path="*" element={<NotFound />} /> {/* Catch-all route for 404 Not Found */}
             </Routes>
             <Footer />
+            <Chatbot />
           </div>
-          <ToastContainer />  {/* Container for displaying toast notifications */}
+          <ToastContainer 
+           position="top-right"
+           autoClose={3000}
+           hideProgressBar={false} // Show progress bar for each toast
+           newestOnTop={false} // New toasts will appear below existing ones
+           closeOnClick // Allow users to close toasts by clicking on them
+           rtl={false} // Left-to-right layout
+           pauseOnFocusLoss // Pause toast timer when the window loses focus
+           draggable
+           pauseOnHover
+           theme="bg-background text-foreground" // Custom theme for toasts
+           className="toast-container" // Custom class for additional styling
+
+           
+           />  {/* Container for displaying toast notifications */}
         </BrowserRouter> {/* enables routing in the app */}
       </ThemeProvider> {/* allows different themes to be applied across the app */}
     </>
