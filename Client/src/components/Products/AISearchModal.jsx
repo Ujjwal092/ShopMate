@@ -11,9 +11,9 @@ const AISearchModal = () => {
   const { isAIPopupOpen } = useSelector((state) => state.popup);
 
   const exampleText = [
-    "Find the best suitable GPU with Ryzen 5600X",
-    "Find all leather jackets for men",
-    "Find all red t-shirts for me",
+    "Find the best suitable Smartphone for me",
+    "Find all t-shirt under $200 for men",
+    "Find all beauty product for me",
   ];
 
   const dispatch = useDispatch();
@@ -36,6 +36,7 @@ z-50 flex items-center justify-center p-4"
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-3">
+           
             <div
               className="w-10 h-10 bg-gradient-to-br from-purple-500 
  to-blue-500 rounded-full flex items-center justify-center"
@@ -45,14 +46,16 @@ z-50 flex items-center justify-center p-4"
 
             <h2 className="text-2xl font-bold text-foreground">
               AI Shopee!
-            </h2>
+            </h2>  
           </div>
+
           <button
             onClick={() => dispatch(toggleAIModal())}
             className="p-2 rounded-lg hover:bg-secondary transition-colors"
           >
             <X className="w-5 h-5 text-foreground" />
           </button>
+
         </div>
         {/* Description */}
         <p className="text-muted-foreground mb-6">
@@ -86,7 +89,7 @@ font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:c
                   className={`w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin`}
                 />
 
-                <span>AI doing magic in the background ...</span>
+                <span>Wait we will show you a magic...</span>
               </>
             ) : (
               <>

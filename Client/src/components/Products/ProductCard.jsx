@@ -112,3 +112,4 @@ const ProductCard = ({ product }) => {
 };
 
 export default ProductCard;
+//this page and ProductDetails are Same!! only flex there and here no flex

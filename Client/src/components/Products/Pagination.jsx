@@ -1,6 +1,7 @@
 import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
   const getPageNumbers = () => {
@@ -9,17 +10,22 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
     if (totalPages <= maxVisible) {
       for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
+        pages.push(i); //[1,2,3]
       }
+    
+      //if total pages are less than or equal to max visible pages, we simply return an array of page numbers from 1 to totalPages.
     } else {
+       
       if (currentPage <= 3) {
         for (let i = 1; i <= 4; i++) {
           pages.push(i);
         }
-        pages.push("...");
-        pages.push(totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        pages.push(1);
+
+        pages.push("..."); 
+        pages.push(totalPages); //// [1,2,3,4,...,7]
+      } 
+        else if (currentPage >= totalPages - 2) {
+        pages.push(1); //if totalPage=12 []
         pages.push("...");
         for (let i = totalPages - 3; i <= totalPages; i++) {
           pages.push(i);
@@ -28,7 +34,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         pages.push(1);
         pages.push("...");
         for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-          pages.push(i);
+          pages.push(i); 
         }
         pages.push("...");
         pages.push(totalPages);

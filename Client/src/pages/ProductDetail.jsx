@@ -206,7 +206,7 @@ const ProductDetail = () => {
                       disabled={product.stock === 0}
                       className="flex items-center justify-center space-x-2 py-3 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <ShoppingCart className="w-5 h-5" />
+                      <ShoppingCart className="w-5 h-5  animate-bounce " />
                       <span>Add to Cart</span>
                     </button>
                     <button
@@ -214,14 +214,14 @@ const ProductDetail = () => {
                       className="flex items-center justify-center space-x-2 py-3 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={handleBuyNow}
                     >
-                      <CircleDollarSign className="w-5 h-5" />
+                      <CircleDollarSign className="w-5 h-5 animate-bounce" />
                       <span>Buy Now</span>
                     </button>
                   </div>
                   <div className="flex items-center space-x-4 mt-4">
                     <button className="flex items-center space-x-2 text-muted-foreground hover:text-primary animate-smooth">
                      
-                      <Heart className="w-5 h-5" />
+                      <Heart className="w-5 h-5 animate-pulse " />
                       <span>Add to Wishlist</span>
                     </button>
                     <button
