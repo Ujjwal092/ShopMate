@@ -18,30 +18,32 @@ const ReviewsContainer = ({ product, productReviews }) => {
     const data = new FormData();
     data.append("rating", rating);
     data.append("comment", comment);
-    dispatch(postReview({ productId: product.id, review: data }));
+    dispatch(postReview({ productId: product.id, review: data })); //from backend
   };
 
   return (
     <>
+    {/**logged in user can only give reviews */}
       {authUser && (
         <form onSubmit={handleReviewSubmit} className="mb-8 space-y-4">
           <h4 className="text-lg font-semibold">Leave a Review</h4>
           <div className="flex items-center space-x-2">
-            {[...Array(5)].map((_, i) => {
+            {[1,2,3,4,5].map((_, i) => {
               return (
                 <button
-                  key={i}
+                  key={i} //index
                   type="button"
                   onClick={() => setRating(i + 1)}
-                  className={`text-2xl ${
-                    i < rating ? "text-yellow-400" : "text-gray-300"
+                  className={`text-2xl cursor-pointer transition hover:scale-110 duration-200 ${
+                    i < rating ? "text-yellow-400 " : "text-gray-300"
                   }`}
                 >
-                  ☆
+                  ★
                 </button>
               );
             })}
           </div>
+
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
@@ -49,6 +51,7 @@ const ReviewsContainer = ({ product, productReviews }) => {
             placeholder="Write your review..."
             className="w-full p-3 rounded-md border-border bg-background text-foreground"
           />
+
           <button
             type="submit"
             disabled={isPostingReview}
@@ -56,6 +59,7 @@ const ReviewsContainer = ({ product, productReviews }) => {
           >
             {isPostingReview ? "Submitting..." : "Submit Review"}
           </button>
+
         </form>
       )}
 
@@ -68,8 +72,9 @@ const ReviewsContainer = ({ product, productReviews }) => {
             return (
               <div key={review.review_id} className="glass-card p-6">
                 <div className="flex items-center space-x-4">
+               
                   <img
-                    src={review.reviewer?.avatar?.url || "/avatar-holder.avif"}
+                    src={review.reviewer?.avatar?.url || "../place-holder.jpg"}
                     alt={review?.reviewer?.name}
                     className="w-12 h-12 rounded-full text-foreground"
                   />
@@ -97,6 +102,7 @@ const ReviewsContainer = ({ product, productReviews }) => {
                     <p className="text-muted-foreground mb-2">
                       {review.comment}
                     </p>
+
                     {authUser?.id === review.reviewer?.id && (
                       <button
                         onClick={() =>

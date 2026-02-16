@@ -36,7 +36,7 @@ const Products = () => {
     dispatch(
       fetchAllProducts({
         category: selectedCategory,
-        price: `${priceRange[0]}-${priceRange[1]}`,
+        price: `${priceRange[0]}-${priceRange[1]}`, //min val at 0 index and max value at 1
         search: searchQuery,
         ratings: selectedRating,
         availability: availability,
@@ -51,7 +51,7 @@ const Products = () => {
     selectedRating,
     availability,
     currentPage,
-  ]);
+  ]); //on changing any of dependencies distpatch fn of useEffect will be called
 
   const totalPages = Math.ceil(totalProducts / 10);
 
@@ -192,6 +192,7 @@ const Products = () => {
                     </button>
                     {categories.map((category) => {
                       return (
+                        
                         <button
                           key={category.id}
                           onClick={() => setSelectedCategory(category.name)}
@@ -263,8 +264,8 @@ const Products = () => {
               {/* No Results */}
               {products.length === 0 && (
                 <div className="text-center py-12">
-                  <p className="text-muted-foreground text-lg">
-                    No products found matching your criteria.
+                  <p className="text-muted-foreground text-lg auto-scroll text-red-500 animate-pulse text-bold">
+                    Sorry!! No products found matching your criteria.
                   </p>
                 </div>
               )}

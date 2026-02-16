@@ -533,6 +533,7 @@ export const fetchAIFilteredProducts = catchAsyncErrors(
   async (req, res, next) => {
 
     const { userPrompt } = req.body;
+    console.log("userPrompt :", userPrompt)
 
     //400 bad req
     if (!userPrompt) {
