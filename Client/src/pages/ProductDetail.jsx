@@ -21,7 +21,7 @@ const ProductDetail = () => {
   const dispatch = useDispatch();
   const product = useSelector((state) => state.product?.productDetails);
   const { loading, productReviews } = useSelector((state) => state.product);
-  const [selectedImage, setSelectedImage] = useState(0);
+  const [selectedImage, setSelectedImage] = useState(0); //image at 0 index
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
 
@@ -106,7 +106,7 @@ const ProductDetail = () => {
                         <img
                           src={image?.url}
                           alt={`${product.title} ${index + 1}`}
-                          className="w-full h-full object-contain"
+                          className="w-full h-full object-contain" //object-cover
                         />
                       </button>
                     );
@@ -116,6 +116,7 @@ const ProductDetail = () => {
 
             <div>
               <div className="mb-4">
+                {/**new and top rated */}
                 <div className="flex space-x-2 mb-4">
                   {new Date() - new Date(product.created_at) <
                     30 * 24 * 60 * 60 * 1000 && (
@@ -129,9 +130,12 @@ const ProductDetail = () => {
                     </span>
                   )}
                 </div>
+                {/**header */}
                 <h1 className="text-3xl font-bold text-foreground mb-2">
                   {product.name}
                 </h1>
+                
+                {/**ratings star */}
                 <div className="flex items-center space-x-4 mb-4">
                   <div className="flex items-center space-x-1">
                     {[...Array(5)].map((_, i) => {
@@ -147,18 +151,25 @@ const ProductDetail = () => {
                       );
                     })}
                   </div>
+
+                    {/**rating*/}
                   <span className="text-foreground font-medium">
                     {product.ratings}
                   </span>
+
                   <span className="text-muted-foreground">
                     ({productReviews?.length}) reviews
                   </span>
                 </div>
+
+                {/**price */}
                 <div className="flex items-center space-x-4 mb-6">
                   <span className="text-2xl font-bold text-primary">
                     ${product.price}
                   </span>
                 </div>
+
+                {/**category */}
                 <div className="flex items-center space-x-4 mb-6">
                   <span className="text-muted-foreground">
                     Category: {product.category}
@@ -179,6 +190,8 @@ const ProductDetail = () => {
                       : "Out of Stock"}
                   </span>
                 </div>
+
+                
                 <div className="glass-card p-6 mb-6">
                   <div className="flex items-center space-x-4 mb-6">
                     <span className="text-lg font-medium">Quantity:</span>
@@ -189,6 +202,7 @@ const ProductDetail = () => {
                       >
                         <Minus className="w-4 h-4" />
                       </button>
+
                       <span className="w-12 text-center font-semibold text-lg">
                         {quantity}
                       </span>
@@ -200,7 +214,9 @@ const ProductDetail = () => {
                       </button>
                     </div>
                   </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  
                     <button
                       onClick={handleAddToCart}
                       disabled={product.stock === 0}
@@ -209,6 +225,7 @@ const ProductDetail = () => {
                       <ShoppingCart className="w-5 h-5  animate-bounce " />
                       <span>Add to Cart</span>
                     </button>
+                  
                     <button
                       disabled={product.stock === 0}
                       className="flex items-center justify-center space-x-2 py-3 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
@@ -218,6 +235,7 @@ const ProductDetail = () => {
                       <span>Buy Now</span>
                     </button>
                   </div>
+                 
                   <div className="flex items-center space-x-4 mt-4">
                     <button className="flex items-center space-x-2 text-muted-foreground hover:text-primary animate-smooth">
                      
@@ -256,6 +274,7 @@ const ProductDetail = () => {
               })}
             </div>
             <div className="p-6">
+
               {activeTab === "description" && (
                 <div>
                   <h3 className="text-xl font-semibold text-foreground mb-4">
@@ -266,6 +285,7 @@ const ProductDetail = () => {
                   </p>
                 </div>
               )}
+
               {activeTab === "reviews" && (
                 <>
                   <ReviewsContainer

@@ -18,7 +18,7 @@ export const generateEmailTemplate = (resetPasswordUrl, userName = "User") => {
             <!-- Header -->
             <tr>
               <td style="padding:30px; text-align:center; background:linear-gradient(135deg,#4f46e5,#9333ea);">
-                <h1 style="margin:0; font-size:24px; color:#ffffff;">ShopMate</h1>
+                <h1 style="margin:0; font-size:24px; color:#ffffff;">CartSyy</h1>
                 <p style="margin:8px 0 0; font-size:14px; color:#e5e7eb;">
                   Your shopping buddy that hates overpaying 💸
                 </p>

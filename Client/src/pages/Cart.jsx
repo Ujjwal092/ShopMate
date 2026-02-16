@@ -1,5 +1,5 @@
 import { Plus, Minus, Trash2, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromCart, updateCartQuantity } from "../store/slices/cartSlice";
 
@@ -47,7 +47,11 @@ const Cart = () => {
           <h1 className="text-3xl font-bold text-foreground mb-2">Shopping Cart</h1>
           <p className="text-muted-foreground">
             {cartItemsCount} item{cartItemsCount !== 1 ? "s" : ""} in your cart
-          </p>
+          </p> 
+          {/** 
+                 if two or more -> items
+                 else -> item
+           */}
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
@@ -112,6 +116,7 @@ const Cart = () => {
           {/* Order Summary */}
           <div className="lg:w-1/3 flex-shrink-0">
             <div className="glass-panel p-6 sticky top-24 flex flex-col gap-4">
+             
               <h2 className="text-xl font-semibold text-foreground mb-4">Order Summary</h2>
 
               <div className="flex justify-between">
@@ -120,7 +125,7 @@ const Cart = () => {
               </div>
 
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Shipping</span>
+                <span className="text-muted-foreground">Shipping Fee</span>
                 <span className="font-semibold text-green-500">{total >= 50 ? "Free" : "$2"}</span>
               </div>
 
@@ -131,7 +136,7 @@ const Cart = () => {
               )}
 
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Tax</span>
+                <span className="text-muted-foreground">Taxes</span>
                 <span className="font-semibold">${(total * 0.18).toFixed(2)}</span>
               </div>
 
@@ -155,6 +160,8 @@ const Cart = () => {
               >
                 Continue Shopping
               </Link>
+
+
             </div>
           </div>
         </div>

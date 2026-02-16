@@ -35,7 +35,7 @@ const About = () => {
           <h1
             className="text-4xl font-bold text-foreground mb-6"
           >
-            About ShopMate
+            About CartSyy
           </h1>
 
           <p
@@ -85,7 +85,7 @@ const About = () => {
           <h2 className="text-2xl font-bold text-foreground mb-4">Our Story</h2>
           <p className="text-muted-foreground leading-relaxed text-lg">
             Founded with a vision to make online shopping simple and enjoyable,
-            ShopMate has grown to become a trusted platform for thousands of
+            CartSyy has grown to become a trusted platform for thousands of
             customers worldwide. We believe that everyone deserves access to
             quality products at fair prices, backed by exceptional customer
             service.
