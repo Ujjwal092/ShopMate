@@ -66,7 +66,7 @@ function App() {
             isAuthenticated && user?.role === "Admin" ? (
               <div className="flex min-h-screen">
                 <SideBar />
-                {renderDashboardContent()}
+                {renderDashboardContent()} {/**if user is auth and admin role  */}
               </div>
             ) : (
               <Navigate to="/login" replace />

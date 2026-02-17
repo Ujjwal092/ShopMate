@@ -57,12 +57,14 @@ const orderSlice = createSlice({
       .addCase(fetchMyOrders.rejected, (state) => {
         state.fetchingOrders = false;
       })
+
+
       .addCase(placeOrder.pending, (state) => {
         state.placingOrder = true;
       })
       .addCase(placeOrder.fulfilled, (state, action) => {
         state.placingOrder = false;
-        state.finalPrice = action.payload.total_price;
+        state.finalPrice = action.payload.total_price; //final price will be calculated from backend
         state.paymentIntent = action.payload.paymentIntent;
         state.orderStep = 2;
       })

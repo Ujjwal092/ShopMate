@@ -18,7 +18,8 @@ const PaymentForm = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); //after summit page will not refresh and in last we used a button to summit
+    
 
     if (!stripe || !elements) return;
     if (!clientSecret) {
@@ -83,7 +84,7 @@ const PaymentForm = () => {
 
       <div className="mb-6">
         <label className="block text-sm font-medium text-foreground mb-2">
-          Card Details *
+          Card Details <span className="text-red-500 text-bold">*</span>
         </label>
         <div className="px-4 py-3 bg-secondary border border-border rounded-lg focus:outline-none text-foreground">
           <CardElement options={cardStyle} />

@@ -48,7 +48,7 @@ const Payment = () => {
   const handlePlaceOrder = (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append("full_name", shippingDetails.fullName);
+    formData.append("full_name", shippingDetails.fullName); //value is as per backend
     formData.append("state", shippingDetails.state);
     formData.append("city", shippingDetails.city);
     formData.append("country", shippingDetails.country);
@@ -86,7 +86,9 @@ const Payment = () => {
       <div className="min-h-screen pt-20">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
+           
             {/* HEADER */}
+           
             <div className="flex items-center space-x-4 mb-8">
               <Link
                 to={"/cart"}
@@ -98,8 +100,9 @@ const Payment = () => {
 
             {/* PROGRESS STEPS */}
             <div className="flex items-center justify-center mb-12">
+             
               <div className="flex items-center space-x-4">
-                {/* STEP 1 */}
+                {/* STEP 1 if details filled mark it tick and proceed to cards section */}
                 <div
                   className={`flex items-center space-x-2 ${
                     orderStep >= 1 ? "text-primary" : "text-muted-foreground"
@@ -144,20 +147,28 @@ const Payment = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
               {/* FORM SECTION */}
               <div className="lg:col-span-2">
-                {orderStep === 1 ? (
+              
+                {orderStep === 1 ? 
+                (
                   /* STEP 1: USER DETAILS */
                   <form onSubmit={handlePlaceOrder} className="glass-panel">
+                  
                     <h2 className="text-xl font-semibold text-foreground mb-6">
                       Shipping Information
                     </h2>
 
+                    {/**full name */}
                     <div className="mb-6">
+                     
                       <div>
+                      
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          Full Name *
+                          Full Name <span className="text-red-500 text-bold">*</span>
                         </label>
+                      
                         <input
                           type="text"
                           required
@@ -165,7 +176,7 @@ const Payment = () => {
                           onChange={(e) => {
                             setShippingDetails({
                               ...shippingDetails,
-                              fullName: e.target.value,
+                              fullName: e.target.value, 
                             });
                           }}
                           className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground"
@@ -173,10 +184,12 @@ const Payment = () => {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                         {/**state field*/}  
+
+                    <div className=" flex md:flex-col gap-4 mb-4">
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          State *
+                          State <span className="text-red-500 text-bold">*</span>
                         </label>
                         <select
                           value={shippingDetails.state}
@@ -188,27 +201,29 @@ const Payment = () => {
                           }}
                           className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground"
                         >
-                          <option value="Karachi">Delhi</option>
-                          <option value="Punjab">Banglore</option>
-                          <option value="Sindh">Bombay</option>
-                          <option value="Balochistan">Karnataka</option>
-                          <option value="Khyber PakhtunKhwa (KPK)">
-                            Khyber PakhtunKhwa (KPK)
+                          <option value="Delhi">Delhi</option>
+                          <option value="Punjab">Punjab</option>
+                          <option value="Bombay">Bombay</option>
+                          <option value="Karnataka">Karnataka</option>
+                          <option value="Tamil Nadu">
+                            Tamil Nadu
                           </option>
-                          <option value="Islamabad Capital Territory">
-                            Islamabad Capital Territory
+                          <option value="Kolkata">
+                            Kolkata
                           </option>
-                          <option value="Azad Jammu And Kashmir (AJK)">
-                            Azad Jammu And Kashmir (AJK)
+                          <option value="Bihar">
+                            Bihar
                           </option>
-                          <option value="Gilgit Baltistan (GB)">
-                            Gilgit Baltistan (GB)
+                          <option value="Jharkhand">
+                            Jharkhand
                           </option>
                         </select>
                       </div>
+                        
+                          {/**phone field*/}  
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          Phone *
+                          Phone <span className="text-red-500 text-bold">*</span>
                         </label>
                         <input
                           type="tel"
@@ -223,12 +238,15 @@ const Payment = () => {
                           className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground"
                         />
                       </div>
+
                     </div>
+
+                          {/**address field*/}  
 
                     <div className="mb-4">
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          Address *
+                          Address <span className="text-red-500 text-bold">*</span>
                         </label>
                         <input
                           type="text"
@@ -244,11 +262,13 @@ const Payment = () => {
                         />
                       </div>
                     </div>
+                
+                  {/**city field + zip code + country*/}  
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          City *
+                          City <span className="text-red-500 text-bold">*</span>
                         </label>
                         <input
                           type="text"
@@ -263,9 +283,10 @@ const Payment = () => {
                           className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground"
                         />
                       </div>
+                     
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          ZIP Code *
+                          ZIP Code <span className="text-red-500 text-bold">*</span>
                         </label>
                         <input
                           type="text"
@@ -280,9 +301,10 @@ const Payment = () => {
                           className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground"
                         />
                       </div>
+
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          Country *
+                          Country <span className="text-red-500 text-bold">*</span>
                         </label>
                         <select
                           value={shippingDetails.country}
@@ -307,7 +329,9 @@ const Payment = () => {
                     </button>
 
                   </form>
-                ) : (
+                ) //ternary end here 
+                
+                : (
                   <>
                     <Elements stripe={stripePromise}>
                       <PaymentForm />
@@ -319,7 +343,7 @@ const Payment = () => {
               {/* ORDER SUMMARY */}
               <div className="lg:col-span-1">
                 <div className="glass-panel sticky top-24">
-                  <h2 className="text-xl font-semibold text-foreground">
+                  <h2 className="text-xl font-semibold text-foreground mb-4">
                     Order Summary
                   </h2>
 
@@ -364,11 +388,11 @@ const Payment = () => {
                     </div>
 
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Tax</span>
+                      <span className="text-muted-foreground">Taxes</span>
                       <span>{(total * 0.18).toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between font-semibold text-lg pt-2 border-t border-[hsla(var(--glass-border))]">
-                      <span>Total</span>
+                      <span>Total Price</span>
                       <span className="text-primary">
                         ${totalWithTax.toFixed(2)}
                       </span>
