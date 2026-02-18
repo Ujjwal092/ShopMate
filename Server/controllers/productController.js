@@ -205,91 +205,91 @@ export const fetchAllProducts = catchAsyncErrors(async (req, res, next) => {
   if http://localhost:4000//products?category=Smartphones
    here this is query
 */
-export const addProductInBulk = catchAsyncErrors(async (req, res, next) => {
-  const created_by = req.user.id;
 
-  if (!req.body.products) {
-    return next(new ErrorHandler("Products data is required", 400));
-  }
+//   const created_by = req.user.id;
 
-  const products = JSON.parse(req.body.products);
+//   if (!req.body.products) {
+//     return next(new ErrorHandler("Products data is required", 400));
+//   }
 
-  if (!Array.isArray(products) || products.length === 0) {
-    return next(new ErrorHandler("Products must be an array", 400));
-  }
+//   const products = JSON.parse(req.body.products);
 
-  const values = [];
-  const placeholders = [];
+//   if (!Array.isArray(products) || products.length === 0) {
+//     return next(new ErrorHandler("Products must be an array", 400));
+//   }
 
-  for (let i = 0; i < products.length; i++) {
-    const { name, description, price, category, stock } = products[i];
+//   const values = [];
+//   const placeholders = [];
 
-    if (!name || !description || !price || !category || stock == null) {
-      return next(
-        new ErrorHandler(`Invalid product data at index ${i}`, 400)
-      );
-    }
+//   for (let i = 0; i < products.length; i++) {
+//     const { name, description, price, category, stock } = products[i];
 
-    /** 🔹 IMAGE UPLOAD **/
-    let uploadedImages = [];
-    const imageKey = `images_${i}`;
+//     if (!name || !description || !price || !category || stock == null) {
+//       return next(
+//         new ErrorHandler(`Invalid product data at index ${i}`, 400)
+//       );
+//     }
 
-    if (req.files && req.files[imageKey]) {
-      const images = Array.isArray(req.files[imageKey])
-        ? req.files[imageKey]
-        : [req.files[imageKey]];
+//     /** 🔹 IMAGE UPLOAD **/
+//     let uploadedImages = [];
+//     const imageKey = `images_${i}`;
 
-      for (const image of images) {
-        const result = await cloudinary.uploader.upload(
-          image.tempFilePath,
-          {
-            folder: "Ecommerce_Product_Images",
-            width: 150,
-            scale: "scale",
-          }
-        );
+//     if (req.files && req.files[imageKey]) {
+//       const images = Array.isArray(req.files[imageKey])
+//         ? req.files[imageKey]
+//         : [req.files[imageKey]];
 
-        uploadedImages.push({
-          url: result.secure_url,
-          public_id: result.public_id,
-        });
-      }
-    }
+//       for (const image of images) {
+//         const result = await cloudinary.uploader.upload(
+//           image.tempFilePath,
+//           {
+//             folder: "Ecommerce_Product_Images",
+//             width: 150,
+//             scale: "scale",
+//           }
+//         );
 
-    const baseIndex = i * 7;
+//         uploadedImages.push({
+//           url: result.secure_url,
+//           public_id: result.public_id,
+//         });
+//       }
+//     }
 
-    placeholders.push(
-      `($${baseIndex + 1}, $${baseIndex + 2}, $${baseIndex + 3},
-        $${baseIndex + 4}, $${baseIndex + 5}, $${baseIndex + 6}, $${baseIndex + 7})`
-    );
+//     const baseIndex = i * 7;
 
-    values.push(
-      name,
-      description,
-      price / 87,
-      category,
-      stock,
-      JSON.stringify(uploadedImages),
-      created_by
-    );
-  }
+//     placeholders.push(
+//       `($${baseIndex + 1}, $${baseIndex + 2}, $${baseIndex + 3},
+//         $${baseIndex + 4}, $${baseIndex + 5}, $${baseIndex + 6}, $${baseIndex + 7})`
+//     );
 
-  const query = `
-    INSERT INTO products
-    (name, description, price, category, stock, images, created_by)
-    VALUES ${placeholders.join(", ")}
-    RETURNING *;
-  `;
+//     values.push(
+//       name,
+//       description,
+//       price / 87,
+//       category,
+//       stock,
+//       JSON.stringify(uploadedImages),
+//       created_by
+//     );
+//   }
 
-  const result = await database.query(query, values);
+//   const query = `
+//     INSERT INTO products
+//     (name, description, price, category, stock, images, created_by)
+//     VALUES ${placeholders.join(", ")}
+//     RETURNING *;
+//   `;
 
-  res.status(201).json({
-    success: true,
-    message: "Products uploaded in bulk with images",
-    count: result.rows.length,
-    products: result.rows,
-  });
-});
+//   const result = await database.query(query, values);
+
+//   res.status(201).json({
+//     success: true,
+//     message: "Products uploaded in bulk with images",
+//     count: result.rows.length,
+//     products: result.rows,
+//   });
+// });
 
 
 export const updateProduct = catchAsyncErrors(async(req,res,next)=>{

@@ -2,7 +2,6 @@ import express from "express";
 import {
   createProduct,
    fetchAllProducts,
-   addProductInBulk,
    updateProduct,
   deleteProduct,
   fetchSingleProduct,
@@ -27,7 +26,7 @@ router.post(
 );
 
  router.get("/", fetchAllProducts);
- router.post( "/admin/bulkupload", isAuthenticated, authorizedRoles("Admin"), addProductInBulk);
+//  router.post( "/admin/bulkupload", isAuthenticated, authorizedRoles("Admin"), addProductInBulk);
  router.get("/singleProduct/:productId", fetchSingleProduct);
 router.put("/post-new/review/:productId", isAuthenticated, postProductReview);
 router.delete("/delete/review/:productId", isAuthenticated, deleteReview);

@@ -3,6 +3,7 @@ import axios from "axios";
 import { axiosInstance } from "../../lib/axios";
 import { toast } from "react-toastify";
 
+//createSlice is used to create a slice having name , initial State and reducer
 const authSlice = createSlice({
   name: "auth",
   initialState: {
@@ -11,7 +12,8 @@ const authSlice = createSlice({
     isAuthenticated: false,
   },
   reducers: {
-    loginRequest(state) {
+   
+    loginRequest(state,action) {
       state.loading = true;
     },
     loginSuccess(state, action) {
@@ -22,6 +24,8 @@ const authSlice = createSlice({
     loginFailed(state) {
       state.loading = false;
     },
+
+  //user data
     getUserRequest(state) {
       state.loading = true;
     },
@@ -35,6 +39,8 @@ const authSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
     },
+
+
     logoutRequest(state) {
       state.loading = true;
     },
@@ -46,6 +52,8 @@ const authSlice = createSlice({
     logoutFailed(state) {
       state.loading = false;
     },
+
+
     forgotPasswordRequest(state) {
       state.loading = true;
     },
@@ -55,17 +63,21 @@ const authSlice = createSlice({
     forgotPasswordFailed(state) {
       state.loading = false;
     },
+
+
     resetPasswordRequest(state) {
       state.loading = true;
     },
     resetPasswordSuccess(state, action) {
       state.loading = false;
       state.isAuthenticated = true;
-      state.user = action.payload;
+      state.user = action.payload; //
     },
     resetPasswordFailed(state) {
       state.loading = false;
     },
+
+
     updateProfileRequest(state) {
       state.loading = true;
     },
@@ -76,6 +88,8 @@ const authSlice = createSlice({
     updateProfileFailed(state) {
       state.loading = false;
     },
+
+
     updatePasswordRequest(state) {
       state.loading = true;
     },
@@ -85,6 +99,8 @@ const authSlice = createSlice({
     updatePasswordFailed(state) {
       state.loading = false;
     },
+
+
     resetAuthSlice(state) {
       state.loading = false;
       state.user = state.user;
@@ -94,7 +110,7 @@ const authSlice = createSlice({
 });
 
 export const login = (data) => async (dispatch) => {
-  dispatch(authSlice.actions.loginRequest());
+  dispatch(authSlice.actions.loginRequest()); //enables login req
   try {
     await axiosInstance.post("/auth/login", data).then((res) => {
       if (res.data.user.role === "Admin") {
