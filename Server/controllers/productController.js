@@ -2,7 +2,8 @@ import database from "../database/db.js";
 import { catchAsyncErrors } from "../middlewares/catchAsyncError.js";
 import ErrorHandler from "../middlewares/errorMiddleware.js";
 import { v2 as cloudinary } from "cloudinary";
-import {getAIRecommendation} from "../utils/getAIRecommendation.js"
+import { getAIRecommendation } from "../utils/getAIRecommendation.js";
+import axios from "axios";
 
 export const createProduct = catchAsyncErrors(async (req, res, next) => {
   const { name, description, price, category, stock } = req.body;
@@ -63,14 +64,13 @@ export const createProduct = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const fetchAllProducts = catchAsyncErrors(async (req, res, next) => {
-  
   const { availability, price, category, ratings, search } = req.query;
-  
+
   const page = parseInt(req.query.page) || 1; //bydefault in page 1
   //but if page requested by user store it in page
-  
+
   const limit = 10;
- 
+
   const offset = (page - 1) * limit; //6 page pr jo product hai wo dekhao
   //so 5*10 = 50 prdoucts  so offset 50 ke baad wle 10 product lake dega
 
@@ -87,8 +87,6 @@ export const fetchAllProducts = catchAsyncErrors(async (req, res, next) => {
   } else if (availability === "out-of-stock") {
     conditions.push(`stock = 0`);
   }
-  
-  
 
   //filter products by price
   // price == ['1000-10000'];
@@ -117,11 +115,11 @@ export const fetchAllProducts = catchAsyncErrors(async (req, res, next) => {
     index++;
   }
 
-// Add search query
-//p is products
+  // Add search query
+  //p is products
   if (search) {
     conditions.push(
-      `(p.name ILIKE $${index} OR p.description ILIKE $${index})`
+      `(p.name ILIKE $${index} OR p.description ILIKE $${index})`,
     );
     values.push(`%${search}%`);
     index++;
@@ -134,7 +132,7 @@ export const fetchAllProducts = catchAsyncErrors(async (req, res, next) => {
   // Get count of filtered products
   const totalProductsResult = await database.query(
     `SELECT COUNT(*) FROM products p ${whereClause}`,
-    values
+    values,
   );
 
   const totalProducts = parseInt(totalProductsResult.rows[0].count);
@@ -197,7 +195,6 @@ export const fetchAllProducts = catchAsyncErrors(async (req, res, next) => {
     topRatedProducts: topRatedResult.rows,
   });
 });
-
 
 /*params?? req.params; kya hai
   so let say http://localhost:4000//password/reset/:token for resetpassword controller
@@ -291,38 +288,38 @@ export const fetchAllProducts = catchAsyncErrors(async (req, res, next) => {
 //   });
 // });
 
+export const updateProduct = catchAsyncErrors(async (req, res, next) => {
+  const { productID } = req.params; //updating product based on id
 
-export const updateProduct = catchAsyncErrors(async(req,res,next)=>{
-    
-    const {  productID} = req.params; //updating product based on id
+  const { name, description, price, category, stock } = req.body;
 
-    const { name, description, price, category, stock } = req.body;
-   
-    if (!name || !description || price == null || !category || stock == null) {
-     
-        return next(
+  if (!name || !description || price == null || !category || stock == null) {
+    return next(
       new ErrorHandler("Please provide complete product details", 400),
     );
-}
+  }
 
   //based on id by req.parms fetch the product and store it in product variable
-   const product = await database.query(`SELECT * FROM products WHERE id = $1`,[productID])
-    
-   //if no product is found for that id 
-   if(product.rows.length === 0){
-    return next(new ErrorHandler ("Product not found",404));
-   }
-   //use currency converter api
-   const result = await database.query(
+  const product = await database.query(`SELECT * FROM products WHERE id = $1`, [
+    productID,
+  ]);
+
+  //if no product is found for that id
+  if (product.rows.length === 0) {
+    return next(new ErrorHandler("Product not found", 404));
+  }
+  //use currency converter api
+  const result = await database.query(
     `UPDATE products SET name = $1 , description= $2, price=$3, category = $4, stock=$5 WHERE id= $6 
-    RETURNING *`,[name,description,price/87, category, stock, productID]
-   )
-   
-   res.status(200).json({
-    success:true,
+    RETURNING *`,
+    [name, description, price / 87, category, stock, productID],
+  );
+
+  res.status(200).json({
+    success: true,
     message: "Product Updated Sucessfully",
-    updateProduct:result.rows[0], //return same product but updated
-   })
+    updateProduct: result.rows[0], //return same product but updated
+  });
 });
 
 export const deleteProduct = catchAsyncErrors(async (req, res, next) => {
@@ -334,13 +331,13 @@ export const deleteProduct = catchAsyncErrors(async (req, res, next) => {
   if (product.rows.length === 0) {
     return next(new ErrorHandler("Product not found.", 404));
   }
-  
+
   //first store images then delete coz later will not be able to access image on this id
   const images = product.rows[0].images;
 
   const deleteResult = await database.query(
     "DELETE FROM products WHERE id = $1 RETURNING *",
-    [productId]
+    [productId],
   );
 
   if (deleteResult.rows.length === 0) {
@@ -361,16 +358,14 @@ export const deleteProduct = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const fetchSingleProduct = catchAsyncErrors(async (req, res, next) => {
-  
-    const { productId } = req.params;
+  const { productId } = req.params;
 
   const result = await database.query(
-    
     //json_build_object means data of reviewer will be in obj format
     //COALESE aggregate multiple tables data in obj format
     //r  means reviews table
     //FILTER(if review exist) if not return empty array explain remain
-   
+
     `
         SELECT p.*,
         COALESCE(
@@ -379,6 +374,7 @@ export const fetchSingleProduct = catchAsyncErrors(async (req, res, next) => {
             'review_id', r.id,
             'rating', r.rating,
             'comment', r.comment,
+            'sentiment', r.sentiment,
             'reviewer', json_build_object(
             'id', u.id,
             'name', u.name,
@@ -390,7 +386,7 @@ export const fetchSingleProduct = catchAsyncErrors(async (req, res, next) => {
          LEFT JOIN users u ON r.user_id = u.id
          WHERE p.id  = $1
          GROUP BY p.id`,
-    [productId]
+    [productId],
   );
 
   res.status(200).json({
@@ -402,17 +398,16 @@ export const fetchSingleProduct = catchAsyncErrors(async (req, res, next) => {
 
 //after payment integration
 export const postProductReview = catchAsyncErrors(async (req, res, next) => {
- 
   const { productId } = req.params;
 
   const { rating, comment } = req.body;
- 
+
   if (!rating || !comment) {
     return next(new ErrorHandler("Please provide rating and comment.", 400));
   }
   //purchase before review
   //oi -> order items table se product_id niklo
-  
+
   const purchasheCheckQuery = `
     SELECT oi.product_id
     FROM order_items oi
@@ -449,27 +444,52 @@ export const postProductReview = catchAsyncErrors(async (req, res, next) => {
     `
     SELECT * FROM reviews WHERE product_id = $1 AND user_id = $2
     `,
-    [productId, req.user.id]
+    [productId, req.user.id],
   );
 
+  // ML Service se sentiment lo
+  let sentiment = "neutral";
+  try {
+    const mlResponse = await axios.post("http://localhost:5001/analyze", {
+      review: comment,
+    });
+    sentiment = mlResponse.data.sentiment;
+    console.log("Sentiment detected:", sentiment);
+  } catch (err) {
+    console.log("ML service unavailable, using default:", err.message);
+  }
+
   let review;
-   //if already reviewd just update else insert
   if (isAlreadyReviewed.rows.length > 0) {
     review = await database.query(
-      "UPDATE reviews SET rating = $1, comment = $2 WHERE product_id = $3 AND user_id = $4 RETURNING *",
-      [rating, comment, productId, req.user.id]
+      "UPDATE reviews SET rating = $1, comment = $2, sentiment = $3 WHERE product_id = $4 AND user_id = $5 RETURNING *",
+      [rating, comment, sentiment, productId, req.user.id],
     );
   } else {
     review = await database.query(
-      "INSERT INTO reviews (product_id, user_id, rating, comment) VALUES ($1, $2, $3, $4) RETURNING *",
-      [productId, req.user.id, rating, comment] //should be seq
+      "INSERT INTO reviews (product_id, user_id, rating, comment, sentiment) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [productId, req.user.id, rating, comment, sentiment],
     );
   }
-  
+
+  // let review;
+  //  //if already reviewd just update else insert
+  // if (isAlreadyReviewed.rows.length > 0) {
+  //   review = await database.query(
+  //     "UPDATE reviews SET rating = $1, comment = $2 WHERE product_id = $3 AND user_id = $4 RETURNING *",
+  //     [rating, comment, productId, req.user.id]
+  //   );
+  // } else {
+  //   review = await database.query(
+  //     "INSERT INTO reviews (product_id, user_id, rating, comment) VALUES ($1, $2, $3, $4) RETURNING *",
+  //     [productId, req.user.id, rating, comment] //should be seq
+  //   );
+  // }
+
   //all reviews of same product and take a average
   const allReviews = await database.query(
     `SELECT AVG(rating) AS avg_rating FROM reviews WHERE product_id = $1`,
-    [productId]
+    [productId],
   );
 
   const newAvgRating = allReviews.rows[0].avg_rating;
@@ -479,7 +499,7 @@ export const postProductReview = catchAsyncErrors(async (req, res, next) => {
     `
         UPDATE products SET ratings = $1 WHERE id = $2 RETURNING *
         `,
-    [newAvgRating, productId]
+    [newAvgRating, productId],
   );
 
   res.status(200).json({
@@ -491,15 +511,14 @@ export const postProductReview = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const deleteReview = catchAsyncErrors(async (req, res, next) => {
- 
-    const { productId } = req.params;
-  
-    //delete review based on  id of product and user and store it in review var
-    const review = await database.query(
+  const { productId } = req.params;
+
+  //delete review based on  id of product and user and store it in review var
+  const review = await database.query(
     "DELETE FROM reviews WHERE product_id = $1 AND user_id = $2 RETURNING *",
-    [productId, req.user.id]
+    [productId, req.user.id],
   );
- 
+
   //review is now new reviews after deleting a review
   if (review.rows.length === 0) {
     return next(new ErrorHandler("Review not found.", 404));
@@ -507,10 +526,10 @@ export const deleteReview = catchAsyncErrors(async (req, res, next) => {
   //get avg
   const allReviews = await database.query(
     `SELECT AVG(rating) AS avg_rating FROM reviews WHERE product_id = $1`,
-    [productId]
+    [productId],
   );
 
-  //new avg 
+  //new avg
   const newAvgRating = allReviews.rows[0].avg_rating;
 
   //updated prod
@@ -518,7 +537,7 @@ export const deleteReview = catchAsyncErrors(async (req, res, next) => {
     `
         UPDATE products SET ratings = $1 WHERE id = $2 RETURNING *
         `,
-    [newAvgRating, productId]
+    [newAvgRating, productId],
   );
 
   res.status(200).json({
@@ -531,15 +550,14 @@ export const deleteReview = catchAsyncErrors(async (req, res, next) => {
 
 export const fetchAIFilteredProducts = catchAsyncErrors(
   async (req, res, next) => {
-
     const { userPrompt } = req.body;
-    console.log("userPrompt :", userPrompt)
+    console.log("userPrompt :", userPrompt);
 
     //400 bad req
     if (!userPrompt) {
       return next(new ErrorHandler("Provide a valid prompt.", 400));
     }
- //I need a Book here I and a is stop Word
+    //I need a Book here I and a is stop Word
     const filterKeywords = (query) => {
       const stopWords = new Set([
         "the",
@@ -639,8 +657,8 @@ export const fetchAIFilteredProducts = catchAsyncErrors(
         OR category ILIKE ANY($1)
         LIMIT 200;     
         `,
-        //200 is word limit of prompt
-      [keywords]
+      //200 is word limit of prompt
+      [keywords],
     );
 
     const filteredProducts = result.rows;
@@ -658,7 +676,7 @@ export const fetchAIFilteredProducts = catchAsyncErrors(
       req,
       res,
       userPrompt,
-      filteredProducts
+      filteredProducts,
     );
 
     res.status(200).json({
@@ -666,5 +684,5 @@ export const fetchAIFilteredProducts = catchAsyncErrors(
       message: "AI filtered products.",
       products,
     });
-  }
+  },
 );

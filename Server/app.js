@@ -21,7 +21,7 @@ app.use(
     origin: [process.env.FRONTEND_URL, process.env.DASHBOARD_URL],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
-  })
+  }),
 );
 
 app.post(
@@ -34,7 +34,7 @@ app.post(
       event = Stripe.webhooks.constructEvent(
         req.body,
         sig,
-        process.env.STRIPE_WEBHOOK_SECRET
+        process.env.STRIPE_WEBHOOK_SECRET,
       );
     } catch (error) {
       return res.status(400).send(`Webhook Error: ${error.message || error}`);
@@ -49,13 +49,11 @@ app.post(
         const updatedPaymentStatus = "Paid";
         const paymentTableUpdateResult = await database.query(
           `UPDATE payments SET payment_status = $1 WHERE payment_intent_id = $2 RETURNING *`,
-          [updatedPaymentStatus, paymentIntent_client_secret
-
-          ]
+          [updatedPaymentStatus, paymentIntent_client_secret],
         );
         await database.query(
           `UPDATE orders SET paid_at = NOW() WHERE id = $1 RETURNING *`,
-          [paymentTableUpdateResult.rows[0].order_id]
+          [paymentTableUpdateResult.rows[0].order_id],
         );
 
         // Reduce Stock For Each Product
@@ -65,14 +63,14 @@ app.post(
           `
             SELECT product_id, quantity FROM order_items WHERE order_id = $1
           `,
-          [orderId]
+          [orderId],
         );
 
         // For each ordered item, reduce the product stock
         for (const item of orderedItems) {
           await database.query(
             `UPDATE products SET stock = stock - $1 WHERE id = $2`,
-            [item.quantity, item.product_id]
+            [item.quantity, item.product_id],
           );
         }
       } catch (error) {
@@ -82,7 +80,7 @@ app.post(
       }
     }
     res.status(200).send({ received: true });
-  }
+  },
 );
 
 app.use(cookieParser());
@@ -93,7 +91,7 @@ app.use(
   fileUpload({
     tempFileDir: "./uploads",
     useTempFiles: true,
-  })
+  }),
 );
 
 app.use("/api/v1/auth", authRouter);
@@ -102,6 +100,9 @@ app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/order", orderRouter);
 
 createTables();
+//creating all tables jo hmne model m prepare kiya tha phr utils m usko async await m lekr aaye the and wo arrow fn createTable wla usko yha call kiye h
+
+//toh aab sare tables create honge and await m eacgh table ko dala h mtlb ek table ke baad he dusra table create hoga and agar koi error aaya toh catch m aa jaega and console m print ho jaega
 
 app.use(errorMiddleware);
 

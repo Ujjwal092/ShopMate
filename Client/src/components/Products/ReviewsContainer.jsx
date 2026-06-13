@@ -6,7 +6,7 @@ import { Star } from "lucide-react";
 const ReviewsContainer = ({ product, productReviews }) => {
   const { authUser } = useSelector((state) => state.auth);
   const { isReviewDeleting, isPostingReview } = useSelector(
-    (state) => state.product
+    (state) => state.product,
   );
   const dispatch = useDispatch();
 
@@ -23,12 +23,12 @@ const ReviewsContainer = ({ product, productReviews }) => {
 
   return (
     <>
-    {/**logged in user can only give reviews */}
+      {/**logged in user can only give reviews */}
       {authUser && (
         <form onSubmit={handleReviewSubmit} className="mb-8 space-y-4">
           <h4 className="text-lg font-semibold">Leave a Review</h4>
           <div className="flex items-center space-x-2">
-            {[1,2,3,4,5].map((_, i) => {
+            {[1, 2, 3, 4, 5].map((_, i) => {
               return (
                 <button
                   key={i} //index
@@ -59,7 +59,6 @@ const ReviewsContainer = ({ product, productReviews }) => {
           >
             {isPostingReview ? "Submitting..." : "Submit Review"}
           </button>
-
         </form>
       )}
 
@@ -72,7 +71,6 @@ const ReviewsContainer = ({ product, productReviews }) => {
             return (
               <div key={review.review_id} className="glass-card p-6">
                 <div className="flex items-center space-x-4">
-               
                   <img
                     src={review.reviewer?.avatar?.url || "../place-holder.jpg"}
                     alt={review?.reviewer?.name}
@@ -99,9 +97,26 @@ const ReviewsContainer = ({ product, productReviews }) => {
                       </div>
                     </div>
 
-                    <p className="text-muted-foreground mb-2">
+                    {/* <p className="text-muted-foreground mb-2">
                       {review.comment}
-                    </p>
+                    </p> */}
+                    {review.sentiment && (
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full font-medium mt-1 inline-block ${
+                          review.sentiment === "positive"
+                            ? "bg-green-100 text-green-700"
+                            : review.sentiment === "negative"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-yellow-100 text-yellow-700"
+                        }`}
+                      >
+                        {review.sentiment === "positive"
+                          ? "😊 Positive"
+                          : review.sentiment === "negative"
+                            ? "😞 Negative"
+                            : "😐 Negative"}
+                      </span>
+                    )}
 
                     {authUser?.id === review.reviewer?.id && (
                       <button
@@ -110,7 +125,7 @@ const ReviewsContainer = ({ product, productReviews }) => {
                             deleteReview({
                               productId: product.id,
                               reviewId: review.review_id,
-                            })
+                            }),
                           )
                         }
                         className="my-6 w-fit flex items-center space-x-3 p-3 rounded-lg glass-card hover:glow-on-hover text-destructive hover:text-destructive-foreground group"
