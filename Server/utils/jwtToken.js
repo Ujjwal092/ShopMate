@@ -1,28 +1,27 @@
 import jwt from "jsonwebtoken";
 
 export const sendToken = (user, statusCode, message, res) => {
+  const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET_KEY, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
 
-  const token = jwt.sign(
-    { id: user.id },
-    process.env.JWT_SECRET_KEY,
-    { expiresIn: process.env.JWT_EXPIRES_IN }
-  );
+  //mtlb cookie me token store krna hai, aur uska expiry time set krna hai, aur secure flag set krna hai (http ke liye false, https ke liye true)
 
   res
     .status(statusCode)
     .cookie("token", token, {
       httpOnly: true,
-      sameSite: "lax",   //  REQUIRED
-      secure: false,     //  REQUIRED for http (localhost)
+      sameSite: "lax", //  REQUIRED
+      secure: false, //  REQUIRED for http (localhost)
       expires: new Date(
-        Date.now() +
-          process.env.COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+        Date.now() + process.env.COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
       ),
     })
     .json({
       success: true,
       user,
       message,
-      token, // (optional — frontend doesn’t need this if using cookies)
+      token,
+      // (optional — frontend doesn’t need this if using cookies)
     });
 };
