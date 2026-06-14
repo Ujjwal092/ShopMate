@@ -13,10 +13,12 @@ import Stripe from "stripe";
 import database from "./database/db.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swagger.js";
+import newsletterRouter from "./routes/newsletterRoutes.js";
+import dotenv from "dotenv";
+
+dotenv.config({ path: "./.env" });
 
 const app = express();
-
-config({ path: "./config/config.env" });
 
 app.use(
   cors({
@@ -95,12 +97,17 @@ app.use(
     useTempFiles: true,
   }),
 );
-
+console.log(
+  "File upload middleware configured with temp directory './uploads'",
+);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/product", productRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/order", orderRouter);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api/v1/newsletter", newsletterRouter);
+
+// console.log(app._router?.stack?.length);
 createTables();
 //creating all tables jo hmne model m prepare kiya tha phr utils m usko async await m lekr aaye the and wo arrow fn createTable wla usko yha call kiye h
 
