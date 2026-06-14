@@ -19,12 +19,14 @@ const database = new Client({
 //   passwordExists: !!process.env.DB_PASSWORD,
 // });
 
-try {
-  await database.connect();
-  console.log("Database connected successfully 😀");
-} catch (err) {
-  console.error("Database connection error 😞", err);
-  process.exit(1);
+if (process.env.NODE_ENV !== "test") {
+  try {
+    await database.connect();
+    console.log("Database connected successfully 😀");
+  } catch (err) {
+    console.error("Database connection error 😞", err);
+    process.exit(1);
+  }
 }
 
 export default database;
