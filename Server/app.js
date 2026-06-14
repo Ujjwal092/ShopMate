@@ -11,6 +11,8 @@ import adminRouter from "./routes/adminRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
 import Stripe from "stripe";
 import database from "./database/db.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger.js";
 
 const app = express();
 
@@ -98,7 +100,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/product", productRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/order", orderRouter);
-
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 createTables();
 //creating all tables jo hmne model m prepare kiya tha phr utils m usko async await m lekr aaye the and wo arrow fn createTable wla usko yha call kiye h
 

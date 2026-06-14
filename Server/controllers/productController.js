@@ -47,7 +47,7 @@ export const createProduct = catchAsyncErrors(async (req, res, next) => {
     [
       name,
       description,
-      price / 87, //indian value bydefault dollar not good pratice
+      price, //indian value bydefault dollar not good pratice
       //make another api which automatically calculate daily up and dowmn
       category,
       stock,
@@ -203,91 +203,6 @@ export const fetchAllProducts = catchAsyncErrors(async (req, res, next) => {
    here this is query
 */
 
-//   const created_by = req.user.id;
-
-//   if (!req.body.products) {
-//     return next(new ErrorHandler("Products data is required", 400));
-//   }
-
-//   const products = JSON.parse(req.body.products);
-
-//   if (!Array.isArray(products) || products.length === 0) {
-//     return next(new ErrorHandler("Products must be an array", 400));
-//   }
-
-//   const values = [];
-//   const placeholders = [];
-
-//   for (let i = 0; i < products.length; i++) {
-//     const { name, description, price, category, stock } = products[i];
-
-//     if (!name || !description || !price || !category || stock == null) {
-//       return next(
-//         new ErrorHandler(`Invalid product data at index ${i}`, 400)
-//       );
-//     }
-
-//     /** 🔹 IMAGE UPLOAD **/
-//     let uploadedImages = [];
-//     const imageKey = `images_${i}`;
-
-//     if (req.files && req.files[imageKey]) {
-//       const images = Array.isArray(req.files[imageKey])
-//         ? req.files[imageKey]
-//         : [req.files[imageKey]];
-
-//       for (const image of images) {
-//         const result = await cloudinary.uploader.upload(
-//           image.tempFilePath,
-//           {
-//             folder: "Ecommerce_Product_Images",
-//             width: 150,
-//             scale: "scale",
-//           }
-//         );
-
-//         uploadedImages.push({
-//           url: result.secure_url,
-//           public_id: result.public_id,
-//         });
-//       }
-//     }
-
-//     const baseIndex = i * 7;
-
-//     placeholders.push(
-//       `($${baseIndex + 1}, $${baseIndex + 2}, $${baseIndex + 3},
-//         $${baseIndex + 4}, $${baseIndex + 5}, $${baseIndex + 6}, $${baseIndex + 7})`
-//     );
-
-//     values.push(
-//       name,
-//       description,
-//       price / 87,
-//       category,
-//       stock,
-//       JSON.stringify(uploadedImages),
-//       created_by
-//     );
-//   }
-
-//   const query = `
-//     INSERT INTO products
-//     (name, description, price, category, stock, images, created_by)
-//     VALUES ${placeholders.join(", ")}
-//     RETURNING *;
-//   `;
-
-//   const result = await database.query(query, values);
-
-//   res.status(201).json({
-//     success: true,
-//     message: "Products uploaded in bulk with images",
-//     count: result.rows.length,
-//     products: result.rows,
-//   });
-// });
-
 export const updateProduct = catchAsyncErrors(async (req, res, next) => {
   const { productID } = req.params; //updating product based on id
 
@@ -312,7 +227,7 @@ export const updateProduct = catchAsyncErrors(async (req, res, next) => {
   const result = await database.query(
     `UPDATE products SET name = $1 , description= $2, price=$3, category = $4, stock=$5 WHERE id= $6 
     RETURNING *`,
-    [name, description, price / 87, category, stock, productID],
+    [name, description, price, category, stock, productID],
   );
 
   res.status(200).json({
@@ -374,7 +289,6 @@ export const fetchSingleProduct = catchAsyncErrors(async (req, res, next) => {
             'review_id', r.id,
             'rating', r.rating,
             'comment', r.comment,
-            'sentiment', r.sentiment,
             'reviewer', json_build_object(
             'id', u.id,
             'name', u.name,
@@ -763,7 +677,7 @@ export const bulkCreateProducts = catchAsyncErrors(async (req, res, next) => {
         [
           name,
           description,
-          price / 87,
+          price,
           category,
           stock,
           JSON.stringify(uploadedImages),
