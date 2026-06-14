@@ -109,6 +109,8 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
   const { email } = req.body;
 
   const { frontendUrl } = req.query; //??
+  console.log(req.query);
+  console.log(frontendUrl);
 
   //find required mail
   let userResult = await database.query(
@@ -139,7 +141,7 @@ export const forgotPassword = catchAsyncErrors(async (req, res, next) => {
 
   const resetPasswordUrl = `${frontendUrl}/password/reset/${resetToken}`;
 
-  const message = generateEmailTemplate(resetPasswordUrl, user);
+  const message = generateEmailTemplate(resetPasswordUrl, user.name);
   //ye fontend url jisme meri token rhegi reset wli wo send krdenge taki email m reset kr paye password
 
   try {
@@ -165,6 +167,7 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
   //while forgotPassword we send a token through email to user
 
   const { token } = req.params;
+  // console.log(req.params);
 
   //hash the token
   const resetPasswordToken = crypto
@@ -277,13 +280,15 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
   if (name.trim().length === 0 || email.trim().length === 0) {
     return next(new ErrorHandler("Name and email can not be empty", 400));
   }
+
   let avatarData = {}; //var
 
-  //req ki file m se and req ke file ke avatar hai toh avatar niklo bhar from re
+  // "Pehle check karo req.files exist karta hai ya nahi, agar karta hai to req.files.avatar check karo."
+
   if (req.files && req.files.avatar) {
     const { avatar } = req.files; //from postman
 
-    // means??
+    // check if avtar already exists
     if (req.user?.avatar?.public_id) {
       await cloudinary.uploader.destroy(req.user.avatar.public_id);
     }

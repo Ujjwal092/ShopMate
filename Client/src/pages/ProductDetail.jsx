@@ -134,7 +134,7 @@ const ProductDetail = () => {
                 <h1 className="text-3xl font-bold text-foreground mb-2">
                   {product.name}
                 </h1>
-                
+
                 {/**ratings star */}
                 <div className="flex items-center space-x-4 mb-4">
                   <div className="flex items-center space-x-1">
@@ -152,7 +152,7 @@ const ProductDetail = () => {
                     })}
                   </div>
 
-                    {/**rating*/}
+                  {/**rating*/}
                   <span className="text-foreground font-medium">
                     {product.ratings}
                   </span>
@@ -165,7 +165,7 @@ const ProductDetail = () => {
                 {/**price */}
                 <div className="flex items-center space-x-4 mb-6">
                   <span className="text-2xl font-bold text-primary">
-                    ${product.price}
+                    ₹{product.price}
                   </span>
                 </div>
 
@@ -179,19 +179,18 @@ const ProductDetail = () => {
                       product.stock > 5
                         ? "bg-green-500/20 text-green-400"
                         : product.stock > 0
-                        ? "bg-yellow-500/20 text-yellow-400"
-                        : "bg-red-500/20 text-red-400"
+                          ? "bg-yellow-500/20 text-yellow-400"
+                          : "bg-red-500/20 text-red-400"
                     }`}
                   >
                     {product.stock > 5
                       ? "In Stock"
                       : product.stock > 0
-                      ? "Limited Stock"
-                      : "Out of Stock"}
+                        ? "Limited Stock"
+                        : "Out of Stock"}
                   </span>
                 </div>
 
-                
                 <div className="glass-card p-6 mb-6">
                   <div className="flex items-center space-x-4 mb-6">
                     <span className="text-lg font-medium">Quantity:</span>
@@ -216,7 +215,6 @@ const ProductDetail = () => {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  
                     <button
                       onClick={handleAddToCart}
                       disabled={product.stock === 0}
@@ -225,7 +223,7 @@ const ProductDetail = () => {
                       <ShoppingCart className="w-5 h-5  animate-bounce " />
                       <span>Add to Cart</span>
                     </button>
-                  
+
                     <button
                       disabled={product.stock === 0}
                       className="flex items-center justify-center space-x-2 py-3 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
@@ -235,10 +233,9 @@ const ProductDetail = () => {
                       <span>Buy Now</span>
                     </button>
                   </div>
-                 
+
                   <div className="flex items-center space-x-4 mt-4">
                     <button className="flex items-center space-x-2 text-muted-foreground hover:text-primary animate-smooth">
-                     
                       <Heart className="w-5 h-5 animate-pulse " />
                       <span>Add to Wishlist</span>
                     </button>
@@ -274,7 +271,6 @@ const ProductDetail = () => {
               })}
             </div>
             <div className="p-6">
-
               {activeTab === "description" && (
                 <div>
                   <h3 className="text-xl font-semibold text-foreground mb-4">

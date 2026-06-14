@@ -672,17 +672,187 @@ export const fetchAIFilteredProducts = catchAsyncErrors(
     }
 
     // STEP 2: AI FILTERING here we r calling fn
+    // STEP 2: AI FILTERING
     const { success, products } = await getAIRecommendation(
-      req,
-      res,
       userPrompt,
       filteredProducts,
     );
+
+    if (!success) {
+      return res.status(200).json({
+        success: true,
+        message: "AI unavailable. Showing SQL filtered products.",
+        products: filteredProducts,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "AI filtered products.",
+      products,
+    });
 
     res.status(200).json({
       success: success,
       message: "AI filtered products.",
       products,
+      Z,
     });
   },
 );
+
+export const bulkCreateProducts = catchAsyncErrors(async (req, res, next) => {
+  const created_by = req.user.id;
+
+  if (!req.body.products) {
+    return next(new ErrorHandler("Products data is required", 400));
+  }
+
+  let products;
+  try {
+    products = JSON.parse(req.body.products);
+  } catch (err) {
+    return next(new ErrorHandler("Invalid products JSON format", 400));
+  }
+
+  if (!Array.isArray(products) || products.length === 0) {
+    return next(new ErrorHandler("Products must be a non-empty array", 400));
+  }
+
+  const insertedProducts = [];
+  const errors = [];
+
+  for (let i = 0; i < products.length; i++) {
+    const { name, description, price, category, stock, images } = products[i];
+
+    if (!name || !description || price == null || !category || stock == null) {
+      errors.push({ index: i, error: "Missing required fields" });
+      continue; // skip this one, don't fail entire batch
+    }
+
+    let uploadedImages = [];
+    const imageKey = `images_${i}`;
+
+    if (req.files && req.files[imageKey]) {
+      // Case 1: actual file uploaded via Postman form-data -> push to Cloudinary
+      const files = Array.isArray(req.files[imageKey])
+        ? req.files[imageKey]
+        : [req.files[imageKey]];
+
+      for (const file of files) {
+        const result = await cloudinary.uploader.upload(file.tempFilePath, {
+          folder: "Ecommerce_Product_Images",
+          width: 150,
+          scale: "scale",
+        });
+        uploadedImages.push({
+          url: result.secure_url,
+          public_id: result.public_id,
+        });
+      }
+    } else if (Array.isArray(images) && images.length > 0) {
+      // Case 2: direct image URLs provided in JSON (e.g. Unsplash) -> use as-is, no upload
+      uploadedImages = images.map((url) => ({ url, public_id: null }));
+    }
+
+    try {
+      const inserted = await database.query(
+        `INSERT INTO products
+         (name, description, price, category, stock, images, created_by)
+         VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+        [
+          name,
+          description,
+          price / 87,
+          category,
+          stock,
+          JSON.stringify(uploadedImages),
+          created_by,
+        ],
+      );
+      insertedProducts.push(inserted.rows[0]);
+    } catch (err) {
+      errors.push({ index: i, error: err.message });
+    }
+  }
+
+  res.status(201).json({
+    success: true,
+    message: `${insertedProducts.length} of ${products.length} products uploaded successfully.`,
+    products: insertedProducts,
+    errors: errors.length > 0 ? errors : undefined,
+  });
+});
+
+export const chatWithBot = catchAsyncErrors(async (req, res, next) => {
+  const { message } = req.body;
+
+  if (!message) {
+    return next(new ErrorHandler("Message is required", 400));
+  }
+
+  const API_KEY = process.env.api_key;
+
+  const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+
+  try {
+    // Fetch a few products to give the bot context about the store
+    const productsResult = await database.query(
+      `SELECT name, price, category, stock FROM products ORDER BY created_at DESC LIMIT 30`,
+    );
+
+    const productList = productsResult.rows
+      .map(
+        (p) =>
+          `${p.name} (${p.category}) - ₹${Math.round(p.price * 87)} - ${p.stock > 0 ? "In Stock" : "Out of Stock"}`,
+      )
+      .join("\n");
+
+    const systemPrompt = `You are CartSyy Assistant, a friendly and helpful shopping assistant for an online store called CartSyy.
+
+Here are some products currently available in the store:
+${productList}
+
+Guidelines:
+- Answer the user's question helpfully and conversationally.
+- If they ask about products, recommend relevant ones from the list above.
+- If they ask something unrelated to shopping, politely redirect them to shopping-related help.
+- Keep responses short and friendly — 2 to 3 sentences max.
+- Use ₹ for prices, do not use $.`;
+
+    const response = await fetch(URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [{ text: `${systemPrompt}\n\nUser: ${message}` }],
+          },
+        ],
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data?.error) {
+      console.log("Gemini chat error:", data.error);
+      return res.status(200).json({
+        success: false,
+        reply:
+          "Sorry, I'm having trouble right now. Please try again in a moment.",
+      });
+    }
+
+    const reply =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
+      "Sorry, I couldn't understand that. Could you rephrase?";
+
+    res.status(200).json({ success: true, reply });
+  } catch (error) {
+    console.log("chatWithBot error:", error.message);
+    res.status(200).json({
+      success: false,
+      reply: "Connection error. Please try again.",
+    });
+  }
+});

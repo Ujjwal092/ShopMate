@@ -1,14 +1,15 @@
 import express from "express";
 import {
   createProduct,
-   fetchAllProducts,
-   updateProduct,
+  fetchAllProducts,
+  updateProduct,
   deleteProduct,
   fetchSingleProduct,
   postProductReview,
   deleteReview,
   fetchAIFilteredProducts,
-
+  bulkCreateProducts,
+  chatWithBot,
 } from "../controllers/productController.js";
 import {
   authorizedRoles,
@@ -22,29 +23,37 @@ router.post(
   "/admin/create",
   isAuthenticated,
   authorizedRoles("Admin"),
-  createProduct
+  createProduct,
 );
 
- router.get("/", fetchAllProducts);
-//  router.post( "/admin/bulkupload", isAuthenticated, authorizedRoles("Admin"), addProductInBulk);
- router.get("/singleProduct/:productId", fetchSingleProduct);
+router.get("/", fetchAllProducts);
+
+router.get("/singleProduct/:productId", fetchSingleProduct);
 router.put("/post-new/review/:productId", isAuthenticated, postProductReview);
 router.delete("/delete/review/:productId", isAuthenticated, deleteReview);
 
- router.put(
+router.put(
   "/admin/update/:productID",
   isAuthenticated,
   authorizedRoles("Admin"),
-  updateProduct
+  updateProduct,
 );
 
 router.delete(
   "/admin/delete/:productId",
   isAuthenticated,
   authorizedRoles("Admin"),
-  deleteProduct
+  deleteProduct,
+);
+
+router.post(
+  "/admin/bulk",
+  isAuthenticated,
+  authorizedRoles("Admin"),
+  bulkCreateProducts,
 );
 
 router.post("/ai-search", isAuthenticated, fetchAIFilteredProducts);
+router.post("/chat", chatWithBot);
 
 export default router;

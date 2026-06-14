@@ -57,8 +57,9 @@ const HeroSlider = () => {
     <div className="relative h-[70vh] overflow-hidden rounded-2xl">
       {/* Single Active Slide */}
       <div className="relative h-full">
-        <div className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
-          style={{ backgroundImage: `url(${slide.image})` }}
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
+          style={{ backgroundImage: `url(₹{slide.image})` }}
         />
         <div className="absolute inset-0 glass" />
         <div className="relative h-full flex items-center justify-center text-center px-6">
