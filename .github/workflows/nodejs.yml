@@ -2,22 +2,17 @@ name: Node.js CI
 
 on:
   push:
-    branches:
-      - main
-      - master
-
+    branches: [main]
   pull_request:
-    branches:
-      - main
-      - master
+    branches: [main]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [22.x]
+    defaults:
+      run:
+        working-directory: Server
 
     steps:
       - name: Checkout Repository
@@ -26,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 22
 
       - name: Install Dependencies
         run: npm install
