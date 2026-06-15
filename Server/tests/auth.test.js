@@ -35,7 +35,7 @@ describe("Auth Routes", () => {
         password: "Password123",
         confirmPassword: "Password123",
       });
-
+    console.log("Reset Password:", res.status, res.body);
     expect(res.status).toBe(400);
   });
 });
