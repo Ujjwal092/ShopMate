@@ -13,7 +13,7 @@ const HeroSlider = () => {
       description:
         "Up to 50% off on premium headphones, smartwatches, and more",
       // Use public /images path so bundler serves from public folder
-      image: "/images/electronics.jpg",
+      image: "/dist/electronics.jpg",
       cta: "Shop Electronics",
       url: "/products?category=Electronics",
     },
@@ -22,7 +22,7 @@ const HeroSlider = () => {
       title: "Fashion Forward",
       subtitle: "Style meets comfort",
       description: "New arrivals in designer clothing and accessories",
-      image: "/images/fashion.jpg",
+      image: "/dist/fashion.jpg",
       cta: "Explore Fashion",
       url: "/products?category=Fashion",
     },
@@ -31,7 +31,7 @@ const HeroSlider = () => {
       title: "Home & Garden",
       subtitle: "Transform your space",
       description: "Beautiful furniture and decor for every home",
-      image: "/images/furniture.jpg",
+      image: "/dist/furniture.jpg",
       cta: "Shop Home",
       url: `/products?category=Home & Garden`,
     },
