@@ -1,4 +1,4 @@
-import { Menu, User, ShoppingCart, Sun, Moon, Search } from "lucide-react";
+import { Menu, User, ShoppingCart, Sun, Moon, Search, Heart } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -13,14 +13,16 @@ const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
   const dispatch = useDispatch(); // For dispatching actions to toggle various popups and sidebar
   const { cart } = useSelector((state) => state.cart); // Get cart items from Redux store
+  const { wishlistIds } = useSelector((state) => state.wishlist);
 
-  const cartItemsCount = cart ? cart.reduce((total, item) => total + item.quantity, 0) : 0;
+  const cartItemsCount = cart
+    ? cart.reduce((total, item) => total + item.quantity, 0)
+    : 0;
 
   return (
     <nav className="fixed left-0 w-full top-0 z-50 bg-background/60 backdrop-blur-md border-b border-border shadow-sm">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          
           {/* LEFT - HAMBURGER MENU button */}
           <button
             onClick={() => dispatch(toggleSidebar())} //on click of hamburger menu toggle sidebar visibility
@@ -35,19 +37,21 @@ const Navbar = () => {
             to="/"
             className="text-2xl  font-bold bg-clip-text text-transparent  bg-gradient-to-r from-purple-500 to-blue-500 hover:scale-105 transition-transform duration-300"
           >
-            <img src="../src/assets/Cart.gif" className="w-8 h-8 mr-2 inline-block" />
+            <img
+              src="../src/assets/Cart.gif"
+              className="w-8 h-8 mr-2 inline-block"
+            />
             CartSyy
           </Link>
 
           {/* RIGHT SIDE ICONS */}
           <div className="flex items-center space-x-3">
-            
             {/* THEME TOGGLE */}
             <button
               onClick={toggleTheme}
               className="p-2 rounded-lg hover:bg-secondary/50 transition-all duration-300 hover:scale-110"
               title="Toggle Theme"
-            > 
+            >
               {theme === "dark" ? ( //if current theme is dark show sun icon to indicate that clicking it will switch to light mode
                 <Sun className="w-5 h-5 text-foreground" />
               ) : (
@@ -73,6 +77,21 @@ const Navbar = () => {
               <User className="w-5 h-5 text-foreground" />
             </button>
 
+            {/* WISHLIST + CART */}
+            <Link
+              to="/wishlist"
+              title="Wishlist"
+              className="relative p-2 rounded-lg hover:bg-secondary/50 transition-all duration-300 hover:scale-110"
+            >
+              <Heart
+                className={`w-5 h-5 text-foreground ${wishlistIds?.length > 0 ? "fill-primary text-primary heart-beat" : ""}`}
+              />
+              {wishlistIds?.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                  {wishlistIds.length}
+                </span>
+              )}
+            </Link>
             {/* CART Button */}
             <button
               onClick={() => dispatch(toggleCart())}
@@ -86,7 +105,6 @@ const Navbar = () => {
                 </span>
               )}
             </button>
-
           </div>
         </div>
       </div>

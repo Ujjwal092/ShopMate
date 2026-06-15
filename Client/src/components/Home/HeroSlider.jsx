@@ -12,7 +12,8 @@ const HeroSlider = () => {
       subtitle: "Discover the latest tech innovations",
       description:
         "Up to 50% off on premium headphones, smartwatches, and more",
-      image: "./electronics.jpg",
+      // Use public /images path so bundler serves from public folder
+      image: "/images/electronics.jpg",
       cta: "Shop Electronics",
       url: "/products?category=Electronics",
     },
@@ -21,7 +22,7 @@ const HeroSlider = () => {
       title: "Fashion Forward",
       subtitle: "Style meets comfort",
       description: "New arrivals in designer clothing and accessories",
-      image: "./fashion.jpg",
+      image: "/images/fashion.jpg",
       cta: "Explore Fashion",
       url: "/products?category=Fashion",
     },
@@ -30,7 +31,7 @@ const HeroSlider = () => {
       title: "Home & Garden",
       subtitle: "Transform your space",
       description: "Beautiful furniture and decor for every home",
-      image: "./furniture.jpg",
+      image: "/images/furniture.jpg",
       cta: "Shop Home",
       url: `/products?category=Home & Garden`,
     },
@@ -59,7 +60,7 @@ const HeroSlider = () => {
       <div className="relative h-full">
         <div
           className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
-          style={{ backgroundImage: `url(₹{slide.image})` }}
+          style={{ backgroundImage: `url(${slide.image})` }}
         />
         <div className="absolute inset-0 glass" />
         <div className="relative h-full flex items-center justify-center text-center px-6">

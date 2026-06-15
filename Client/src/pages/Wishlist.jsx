@@ -39,7 +39,7 @@ const Wishlist = () => {
     <div className="min-h-screen pt-20">
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center gap-3 mb-8">
-          <Heart className="w-7 h-7 text-primary fill-primary" />
+          <Heart className="w-7 h-7 text-primary fill-primary heart-beat" />
           <h1 className="text-3xl font-bold text-foreground">My Wishlist</h1>
           <span className="text-muted-foreground">({wishlist.length})</span>
         </div>

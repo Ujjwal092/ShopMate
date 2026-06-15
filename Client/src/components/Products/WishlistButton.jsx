@@ -60,7 +60,9 @@ const WishlistButton = ({ productId, className = "", showLabel = false }) => {
     >
       <Heart
         className={`w-4 h-4 transition-colors ${
-          isWishlisted ? "fill-primary text-primary" : "text-foreground"
+          isWishlisted
+            ? "fill-primary text-primary heart-beat"
+            : "text-foreground"
         }`}
       />
     </button>

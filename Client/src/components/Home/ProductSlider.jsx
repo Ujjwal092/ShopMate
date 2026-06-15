@@ -13,7 +13,7 @@ const ProductSlider = ({ title, products }) => {
       const scrollAmount = 320;
       scrollRef.current.scrollBy({
         left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth", 
+        behavior: "smooth",
       });
     }
   };
@@ -29,18 +29,16 @@ const ProductSlider = ({ title, products }) => {
     <>
       <section className="py-16">
         <div className="flex items-center justify-between mb-8">
-        
           <h2 className="text-3xl font-bold text-foreground">{title}</h2>
-        
+
           <div className="flex space-x-2">
-           
             <button
               onClick={() => scroll("left")} //'left is direction' passed to scroll function to determine scroll direction
               className="p-2 glass-card hover:glow-on-hover animate-smooth"
             >
               <ChevronLeft className="w-6 h-6 text-primary" />
             </button>
-           
+
             <button
               onClick={() => scroll("right")}
               className="p-2 glass-card hover:glow-on-hover animate-smooth"
@@ -64,8 +62,8 @@ const ProductSlider = ({ title, products }) => {
                 {/* PRODUCT IMAGE */}
                 <div className="relative overflow-hidden rounded-lg mb-4">
                   <img
-                     src={product.images?.[0]?.url || "/placeholder.png"}
-                     alt={product.name || "Product Image"}
+                    src={product.images?.[0]?.url || "/placeholder.png"}
+                    alt={product.name || "Product Image"}
                     className="w-full h-48 object-contain group-hover:scale-110 transition-transform duration-300"
                   />
 
@@ -73,9 +71,8 @@ const ProductSlider = ({ title, products }) => {
                   <div className="absolute top-3 left-3 flex flex-col space-y-2">
                     {/* UPDATE THIS CODE */}
                     {new Date() - new Date(product.created_at) <
-                      30 * 24 * 60 * 60 * 1000 //30 days in milliseconds 
+                      30 * 24 * 60 * 60 * 1000 && ( //30 days in milliseconds
                       // if product is added within last 30 days show new badge
-                       && (
                       <span className="px-2 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded">
                         NEW
                       </span>
@@ -139,18 +136,20 @@ const ProductSlider = ({ title, products }) => {
                         product.stock > 5
                           ? "bg-green-500/20 text-green-400"
                           : product.stock > 0
-                          ? "bg-yellow-500/20 text-yellow-400"
-                          : "bg-red-500/20 text-red-400"
+                            ? "bg-yellow-500/20 text-yellow-400"
+                            : "bg-red-500/20 text-red-400"
                       }`}
                     >
                       {product.stock > 5
-                        ? "In Stock" 
+                        ? "In Stock"
                         : product.stock > 0
-                        ? "Limited Stock" 
-                        : "Out of Stock"}
+                          ? "Limited Stock"
+                          : "Out of Stock"}
                     </span>
                     <span className="text-xs text-muted-foreground ml-2 italic  text-orange-400 animate-pulse">
-                      {product.stock<5 && product.stock > 0 && `Hurry!! up only ${product.stock} left`}
+                      {product.stock < 5 &&
+                        product.stock > 0 &&
+                        `Hurry!! up only ${product.stock} left`}
                       {product.stock === 0 && `Out of stock!! restocking soon`}
                     </span>
                   </div>
