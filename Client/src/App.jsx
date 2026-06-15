@@ -3,10 +3,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./toast.css";
-import Chatbot from "../src/components/Layout/Chatbot"
-
-
-
+import Chatbot from "../src/components/Layout/Chatbot";
 
 // Layout Components
 import Navbar from "./components/Layout/Navbar";
@@ -28,11 +25,15 @@ import About from "./pages/About";
 import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import Wishlist from "./pages/Wishlist";
+
+// Redux
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getUser } from "./store/slices/authSlice";
 import { Loader } from "lucide-react";
 import { fetchAllProducts } from "./store/slices/productSlice";
+import { fetchWishlistIds } from "./store/slices/wishlistSlice";
 
 const App = () => {
   const { authUser, isCheckingAuth } = useSelector((state) => state.auth);
@@ -51,10 +52,14 @@ const App = () => {
         ratings: "",
         availability: "",
         page: 1,
-      })
+      }),
     );
   }, []);
-
+  useEffect(() => {
+    if (authUser) {
+      dispatch(fetchWishlistIds());
+    }
+  }, [authUser, dispatch]);
   const { products } = useSelector((state) => state.product);
 
   if ((isCheckingAuth && !authUser) || !products) {
@@ -72,12 +77,13 @@ const App = () => {
           <div className="min-h-screen bg-background">
             {/* All components that need to be rendered in the app and 
             it will be rendered in the order they are defined here */}
-            <Navbar /> 
+            <Navbar />
             <Sidebar />
             <SearchOverlay />
             <CartSidebar />
             <ProfilePanel />
             <LoginModal />
+
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/password/reset/:token" element={<Index />} />
@@ -89,28 +95,31 @@ const App = () => {
               <Route path="/about" element={<About />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/contact" element={<Contact />} />
-              <Route path="*" element={<NotFound />} /> {/* Catch-all route for 404 Not Found */}
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="*" element={<NotFound />} />{" "}
+              {/* Catch-all route for 404 Not Found */}
             </Routes>
             <Footer />
             <Chatbot />
           </div>
-          <ToastContainer 
-           position="top-right"
-           autoClose={3000}
-           hideProgressBar={false} // Show progress bar for each toast
-           newestOnTop={false} // New toasts will appear below existing ones
-           closeOnClick // Allow users to close toasts by clicking on them
-           rtl={false} // Left-to-right layout
-           pauseOnFocusLoss // Pause toast timer when the window loses focus
-           draggable
-           pauseOnHover
-           theme="bg-background text-foreground" // Custom theme for toasts
-           className="toast-container" // Custom class for additional styling
-
-           
-           />  {/* Container for displaying toast notifications */}
-        </BrowserRouter> {/* enables routing in the app */}
-      </ThemeProvider> {/* allows different themes to be applied across the app */}
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false} // Show progress bar for each toast
+            newestOnTop={false} // New toasts will appear below existing ones
+            closeOnClick // Allow users to close toasts by clicking on them
+            rtl={false} // Left-to-right layout
+            pauseOnFocusLoss // Pause toast timer when the window loses focus
+            draggable
+            pauseOnHover
+            theme="bg-background text-foreground" // Custom theme for toasts
+            className="toast-container" // Custom class for additional styling
+          />{" "}
+          {/* Container for displaying toast notifications */}
+        </BrowserRouter>{" "}
+        {/* enables routing in the app */}
+      </ThemeProvider>{" "}
+      {/* allows different themes to be applied across the app */}
     </>
   );
 };

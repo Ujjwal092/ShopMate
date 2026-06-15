@@ -10,6 +10,7 @@ import {
   fetchAIFilteredProducts,
   bulkCreateProducts,
   chatWithBot,
+  fetchSimilarProducts,
 } from "../controllers/productController.js";
 import {
   authorizedRoles,
@@ -55,5 +56,5 @@ router.post(
 
 router.post("/ai-search", isAuthenticated, fetchAIFilteredProducts);
 router.post("/chat", chatWithBot);
-
+router.get("/similar/:productId", fetchSimilarProducts);
 export default router;

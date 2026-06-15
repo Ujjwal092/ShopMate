@@ -3,6 +3,7 @@ import { catchAsyncErrors } from "../middlewares/catchAsyncError.js";
 import ErrorHandler from "../middlewares/errorMiddleware.js";
 import { v2 as cloudinary } from "cloudinary";
 import { getAIRecommendation } from "../utils/getAIRecommendation.js";
+import { findSimilarProducts } from "../utils/knnRecommendation.js";
 import axios from "axios";
 
 export const createProduct = catchAsyncErrors(async (req, res, next) => {
@@ -769,4 +770,31 @@ Guidelines:
       reply: "Connection error. Please try again.",
     });
   }
+});
+// Add this import at the top of productController.js:
+// import { findSimilarProducts } from "../utils/knnRecommendation.js";
+
+export const fetchSimilarProducts = catchAsyncErrors(async (req, res, next) => {
+  const { productId } = req.params;
+  const k = parseInt(req.query.k) || 5;
+
+  // Fetch lightweight fields only — enough to build feature vectors and display cards
+  const result = await database.query(
+    `SELECT id, name, price, category, ratings, images, stock FROM products`,
+  );
+
+  const allProducts = result.rows;
+
+  const targetExists = allProducts.some((p) => p.id === productId);
+  if (!targetExists) {
+    return next(new ErrorHandler("Product not found.", 404));
+  }
+
+  const similarProducts = findSimilarProducts(allProducts, productId, k);
+
+  res.status(200).json({
+    success: true,
+    message: "Similar products fetched successfully.",
+    products: similarProducts,
+  });
 });

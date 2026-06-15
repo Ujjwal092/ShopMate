@@ -14,8 +14,9 @@ import database from "./database/db.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swagger.js";
 import newsletterRouter from "./routes/newsletterRoutes.js";
+import contactRouter from "./routes/contactRoutes.js";
 import dotenv from "dotenv";
-
+import wishlistRouter from "./routes/wishlistRoutes.js";
 dotenv.config({ path: "./.env" });
 
 const app = express();
@@ -106,7 +107,8 @@ app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/order", orderRouter);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/v1/newsletter", newsletterRouter);
-
+app.use("/api/v1/contact", contactRouter);
+app.use("/api/v1/wishlist", wishlistRouter);
 // console.log(app._router?.stack?.length);
 createTables();
 //creating all tables jo hmne model m prepare kiya tha phr utils m usko async await m lekr aaye the and wo arrow fn createTable wla usko yha call kiye h

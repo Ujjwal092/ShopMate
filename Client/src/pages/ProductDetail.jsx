@@ -15,6 +15,8 @@ import ReviewsContainer from "../components/Products/ReviewsContainer";
 import { addToCart } from "../store/slices/cartSlice";
 import { fetchProductDetails } from "../store/slices/productSlice";
 import { toast } from "react-toastify";
+import SimilarProducts from "../components/Products/Similarproducts";
+import WishlistButton from "../components/Products/WishlistButton";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -235,10 +237,7 @@ const ProductDetail = () => {
                   </div>
 
                   <div className="flex items-center space-x-4 mt-4">
-                    <button className="flex items-center space-x-2 text-muted-foreground hover:text-primary animate-smooth">
-                      <Heart className="w-5 h-5 animate-pulse " />
-                      <span>Add to Wishlist</span>
-                    </button>
+                    <WishlistButton productId={product.id} showLabel={true} />
                     <button
                       onClick={handleCopyURL}
                       className="flex items-center space-x-2 text-muted-foreground hover:text-primary animate-smooth"
@@ -291,6 +290,7 @@ const ProductDetail = () => {
                 </>
               )}
             </div>
+            <SimilarProducts productId={product.id} />
           </div>
         </div>
       </div>
