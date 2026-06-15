@@ -3,7 +3,7 @@ import { config } from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
-// import { createTables } from "./utils/createTables.js";
+import { createTables } from "./utils/createTables.js";
 import { errorMiddleware } from "./middlewares/errorMiddleware.js";
 import authRouter from "./routes/authRoutes.js";
 import productRouter from "./routes/productRoutes.js";
@@ -110,7 +110,7 @@ app.use("/api/v1/newsletter", newsletterRouter);
 app.use("/api/v1/contact", contactRouter);
 app.use("/api/v1/wishlist", wishlistRouter);
 // console.log(app._router?.stack?.length);
-// createTables();
+createTables();
 //creating all tables jo hmne model m prepare kiya tha phr utils m usko async await m lekr aaye the and wo arrow fn createTable wla usko yha call kiye h
 
 //toh aab sare tables create honge and await m eacgh table ko dala h mtlb ek table ke baad he dusra table create hoga and agar koi error aaya toh catch m aa jaega and console m print ho jaega

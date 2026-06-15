@@ -20,7 +20,7 @@ export const createTables = async () => {
     await createPaymentsTable();
     await createNewsletterTable();
     await createContactMessagesTable();
-    // await createWishlistTable();
+    await createWishlistTable();
     console.log("All Tables Created Successfully.");
   } catch (error) {
     console.error("Error creating tables:", error);
