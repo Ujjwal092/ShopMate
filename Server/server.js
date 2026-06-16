@@ -2,7 +2,9 @@ import dotenv from "dotenv";
 dotenv.config({ path: "./.env" });
 
 import app from "./app.js";
+import { connectDatabase } from "./database/db.js";
 import { v2 as cloudinary } from "cloudinary";
+import { createTables } from "./utils/createTables.js";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLIENT_NAME,
@@ -10,6 +12,9 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_CLIENT_SECRET,
   secure: true,
 });
+
+await connectDatabase();
+await createTables();
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is working on http://localhost:${process.env.PORT}`);

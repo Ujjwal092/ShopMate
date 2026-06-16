@@ -291,6 +291,56 @@ export const updateOrderStatus = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+export const cancelOrder = catchAsyncErrors(async (req, res, next) => {
+  const { orderId } = req.params;
+  const result = await database.query(
+    `SELECT * FROM orders WHERE id = $1`,
+    [orderId],
+  );
+
+  if (result.rows.length === 0) {
+    return next(new ErrorHandler("Order not found.", 404));
+  }
+
+  const order = result.rows[0];
+
+  if (order.buyer_id !== req.user.id) {
+    return next(new ErrorHandler("You are not authorized to cancel this order.", 403));
+  }
+
+  if (order.order_status === "Cancelled") {
+    return next(new ErrorHandler("Order is already cancelled.", 400));
+  }
+
+  if (order.order_status !== "Processing") {
+    return next(
+      new ErrorHandler(
+        "Only orders that are still processing can be cancelled.",
+        400,
+      ),
+    );
+  }
+
+  const createdAt = new Date(order.created_at);
+  const elapsed = Date.now() - createdAt.getTime();
+  if (elapsed > 15 * 60 * 1000) {
+    return next(
+      new ErrorHandler("The cancellation window has expired.", 400),
+    );
+  }
+
+  const updatedOrder = await database.query(
+    `UPDATE orders SET order_status = 'Cancelled' WHERE id = $1 RETURNING *`,
+    [orderId],
+  );
+
+  res.status(200).json({
+    success: true,
+    message: "Order cancelled successfully.",
+    updatedOrder: updatedOrder.rows[0],
+  });
+});
+
 export const deleteOrder = catchAsyncErrors(async (req, res, next) => {
   const { orderId } = req.params;
   const results = await database.query(

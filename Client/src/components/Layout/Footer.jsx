@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import {
   Mail,
   Phone,
@@ -9,9 +10,26 @@ import {
   Youtube,
 } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
+import { toast } from "react-toastify";
+import { axiosInstance } from "../../lib/axios";
 
 const Footer = () => {
   const { theme } = useTheme();
+  const [footerEmail, setFooterEmail] = useState("");
+  const [footerLoading, setFooterLoading] = useState(false);
+
+  const handleFooterSubscribe = async (e) => {
+    e.preventDefault();
+    if (!footerEmail) { toast.error('Please enter a valid email.'); return; }
+    setFooterLoading(true);
+    try {
+      await axiosInstance.post('/newsletter/subscribe', { email: footerEmail });
+      toast.success('Subscribed successfully');
+      setFooterEmail('');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Subscription failed');
+    } finally { setFooterLoading(false); }
+  };
 
   const footerLinks = {
     company: [
@@ -105,17 +123,21 @@ const Footer = () => {
               Subscribe to our newsletter for exclusive offers and updates  💜
             </p>
           </div>
-          <form className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <form onSubmit={handleFooterSubscribe} className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <input
               type="email"
               placeholder="Enter your email"
+              value={footerEmail}
+              onChange={(e) => setFooterEmail(e.target.value)}
               className="px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground placeholder-muted-foreground flex-1"
+              required
             />
             <button
               type="submit"
-              className="px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:scale-105 transition-transform duration-300 font-semibold shadow-lg"
+              disabled={footerLoading}
+              className="px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:scale-105 transition-transform duration-300 font-semibold shadow-lg disabled:opacity-50"
             >
-              Subscribe
+              {footerLoading ? 'Subscribing...' : 'Subscribe'}
             </button>
           </form>
         </div>

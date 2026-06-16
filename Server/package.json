@@ -33,6 +33,9 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
+    "babel-jest": "^30.4.1",
     "jest": "^30.4.2",
     "supertest": "^7.2.2"
   }

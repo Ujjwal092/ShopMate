@@ -30,6 +30,24 @@ export const placeOrder = createAsyncThunk(
   }
 );
 
+export const cancelOrder = createAsyncThunk(
+  "order/cancel",
+  async (orderId, thunkAPI) => {
+    try {
+      const res = await axiosInstance.put(`/order/cancel/${orderId}`);
+      toast.success(res.data.message);
+      return res.data.updatedOrder;
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to cancel order."
+      );
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to cancel order."
+      );
+    }
+  }
+);
+
 const orderSlice = createSlice({
   name: "order",
   initialState: {
@@ -70,6 +88,11 @@ const orderSlice = createSlice({
       })
       .addCase(placeOrder.rejected, (state) => {
         state.placingOrder = false;
+      })
+      .addCase(cancelOrder.fulfilled, (state, action) => {
+        state.myOrders = state.myOrders.map((order) =>
+          order.id === action.payload.id ? action.payload : order,
+        );
       });
   },
 });

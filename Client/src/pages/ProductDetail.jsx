@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Star,
   ShoppingCart,
@@ -12,6 +12,9 @@ import {
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import ReviewsContainer from "../components/Products/ReviewsContainer";
+import { axiosInstance } from "../lib/axios";
+import { addRecentlyViewedId } from "../lib/recentlyViewed";
+import { formatINR } from "../lib/currency";
 import { addToCart } from "../store/slices/cartSlice";
 import { fetchProductDetails } from "../store/slices/productSlice";
 import { toast } from "react-toastify";
@@ -23,9 +26,16 @@ const ProductDetail = () => {
   const dispatch = useDispatch();
   const product = useSelector((state) => state.product?.productDetails);
   const { loading, productReviews } = useSelector((state) => state.product);
+  const { authUser } = useSelector((state) => state.auth);
   const [selectedImage, setSelectedImage] = useState(0); //image at 0 index
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState("description");
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get("tab") === "reviews" ? "reviews" : "description";
+  });
+  const [alertEmail, setAlertEmail] = useState(authUser?.email || "");
+  const [alertRequested, setAlertRequested] = useState(false);
 
   const handleAddToCart = () => {
     dispatch(addToCart({ product, quantity }));
@@ -42,6 +52,28 @@ const ProductDetail = () => {
         console.error("Failed to copy:", err);
       });
   };
+
+  const handleStockAlert = async (e) => {
+    e.preventDefault();
+    if (!alertEmail) {
+      toast.error("Please enter an email to get notified.");
+      return;
+    }
+
+    try {
+      await axiosInstance.post("/stock-alerts/subscribe", {
+        productId: product.id,
+        email: alertEmail,
+      });
+      setAlertRequested(true);
+      toast.success("You will be notified when the product is back in stock.");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to subscribe for stock alerts. Please try again.",
+      );
+    }
+  };
   const navigateTo = useNavigate();
   const handleBuyNow = () => {
     dispatch(addToCart({ product, quantity }));
@@ -51,6 +83,12 @@ const ProductDetail = () => {
   useEffect(() => {
     dispatch(fetchProductDetails(id));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    if (product?.id) {
+      addRecentlyViewedId(product.id);
+    }
+  }, [product?.id]);
 
   if (!product) {
     return (
@@ -167,7 +205,7 @@ const ProductDetail = () => {
                 {/**price */}
                 <div className="flex items-center space-x-4 mb-6">
                   <span className="text-2xl font-bold text-primary">
-                    ₹{product.price}
+                    {formatINR(product.price)}
                   </span>
                 </div>
 
@@ -192,6 +230,38 @@ const ProductDetail = () => {
                         : "Out of Stock"}
                   </span>
                 </div>
+
+                {product.stock === 0 && (
+                  <div className="glass-card p-6 mb-6 border border-amber-300 bg-amber-50/50">
+                    <h3 className="text-xl font-semibold text-foreground mb-2">
+                      Notify me when available
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      This product is out of stock. Enter your email and we will notify you as soon as it is back.
+                    </p>
+
+                    <form
+                      onSubmit={handleStockAlert}
+                      className="grid gap-3 md:grid-cols-[1fr_auto]"
+                    >
+                      <input
+                        type="email"
+                        value={alertEmail}
+                        onChange={(e) => setAlertEmail(e.target.value)}
+                        className="w-full px-4 py-3 bg-white border border-border rounded-lg text-foreground"
+                        placeholder="Enter your email"
+                        disabled={alertRequested}
+                      />
+                      <button
+                        type="submit"
+                        disabled={alertRequested}
+                        className="px-5 py-3 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-semibold"
+                      >
+                        {alertRequested ? "Subscribed" : "Notify Me"}
+                      </button>
+                    </form>
+                  </div>
+                )}
 
                 <div className="glass-card p-6 mb-6">
                   <div className="flex items-center space-x-4 mb-6">

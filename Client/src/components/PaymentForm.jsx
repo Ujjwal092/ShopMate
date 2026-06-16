@@ -49,7 +49,7 @@ const PaymentForm = () => {
         toast.success("Payment Successful!");
         dispatch(toggleOrderStep());
         dispatch(clearCart());
-        navigate("/");
+        navigate("/orders");
       } else {
         setErrorMessage("Payment could not be completed. Please try again.");
       }

@@ -5,6 +5,7 @@ import {
   removeFromCart,
   updateCartQuantity,
 } from "../../store/slices/cartSlice";
+import { formatINR } from "../../lib/currency";
 import { toggleCart } from "../../store/slices/popupSlice";
 
 const CartSidebar = () => {
@@ -92,7 +93,7 @@ const CartSidebar = () => {
                               {item.product.name}
                             </h3>
                             <p className="text-primary font-semibold">
-                              ${item.product.price}
+                                                          {formatINR(item.product.price)}
                             </p>
                             {/* Quantity Controls */}
 
@@ -153,7 +154,7 @@ const CartSidebar = () => {
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-lg font-semibold">Total:</span>
                   <span className="text-xl font-bold text-primary">
-                    ${total.toFixed(2)} {/* toFixed(2) is used to show only 2 decimal places in total price */}
+                    {formatINR(total)} {/* toFixed(2) is used to show only 2 decimal places in total price */}
                   </span>
                 </div>
 

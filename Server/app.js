@@ -3,7 +3,6 @@ import { config } from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
-import { createTables } from "./utils/createTables.js";
 import { errorMiddleware } from "./middlewares/errorMiddleware.js";
 import authRouter from "./routes/authRoutes.js";
 import productRouter from "./routes/productRoutes.js";
@@ -15,6 +14,8 @@ import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swagger.js";
 import newsletterRouter from "./routes/newsletterRoutes.js";
 import contactRouter from "./routes/contactRoutes.js";
+import testimonialRouter from "./routes/testimonialRoutes.js";
+import stockAlertRouter from "./routes/stockAlertRoutes.js";
 import dotenv from "dotenv";
 import wishlistRouter from "./routes/wishlistRoutes.js";
 dotenv.config({ path: "./.env" });
@@ -108,12 +109,10 @@ app.use("/api/v1/order", orderRouter);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/v1/newsletter", newsletterRouter);
 app.use("/api/v1/contact", contactRouter);
+app.use("/api/v1/testimonials", testimonialRouter);
+app.use("/api/v1/stock-alerts", stockAlertRouter);
 app.use("/api/v1/wishlist", wishlistRouter);
 // console.log(app._router?.stack?.length);
-createTables();
-//creating all tables jo hmne model m prepare kiya tha phr utils m usko async await m lekr aaye the and wo arrow fn createTable wla usko yha call kiye h
-
-//toh aab sare tables create honge and await m eacgh table ko dala h mtlb ek table ke baad he dusra table create hoga and agar koi error aaya toh catch m aa jaega and console m print ho jaega
 
 app.use(errorMiddleware);
 

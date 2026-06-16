@@ -2,6 +2,7 @@ import express from "express";
 import {
   createProduct,
   fetchAllProducts,
+  fetchProductsByIds,
   updateProduct,
   deleteProduct,
   fetchSingleProduct,
@@ -28,6 +29,7 @@ router.post(
 );
 
 router.get("/", fetchAllProducts);
+router.get("/ids", fetchProductsByIds);
 
 router.get("/singleProduct/:productId", fetchSingleProduct);
 router.put("/post-new/review/:productId", isAuthenticated, postProductReview);

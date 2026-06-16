@@ -2,6 +2,7 @@ import { Plus, Minus, Trash2, ArrowRight } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromCart, updateCartQuantity } from "../store/slices/cartSlice";
+import { formatINR } from "../lib/currency";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -74,7 +75,7 @@ const Cart = () => {
                       <h3 className="text-lg font-semibold text-foreground">{item.product.name}</h3>
                     </Link>
                     <p className="text-muted-foreground text-sm">Category: {item.product.category}</p>
-                    <span className="text-xl font-bold text-primary">${item.product.price}</span>
+                    <span className="text-xl font-bold text-primary">{formatINR(item.product.price)}</span>
                   </div>
 
                   <div className="flex items-center gap-4 mt-2 md:mt-0">
@@ -105,7 +106,7 @@ const Cart = () => {
 
                   <div className="text-right mt-2 md:mt-0">
                     <p className="text-lg font-bold text-foreground">
-                      ${(item.product.price * item.quantity).toFixed(2)}
+                                          {formatINR(item.product.price * item.quantity)}
                     </p>
                   </div>
                 </div>
@@ -121,12 +122,12 @@ const Cart = () => {
 
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal ({cartItemsCount} items)</span>
-                <span className="font-semibold">${total.toFixed(2)}</span>
+                <span className="font-semibold">{formatINR(total)}</span>
               </div>
 
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping Fee</span>
-                <span className="font-semibold text-green-500">{total >= 50 ? "Free" : "$2"}</span>
+                <span className="font-semibold text-green-500">{total >= 50 ? "Free" : formatINR(2)}</span>
               </div>
 
               {total < 50 && (
@@ -137,12 +138,12 @@ const Cart = () => {
 
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Taxes</span>
-                <span className="font-semibold">${(total * 0.18).toFixed(2)}</span>
+                <span className="font-semibold">{formatINR(total * 0.18)}</span>
               </div>
 
               <div className="border-t border-[hsla(var(--glass-border))] pt-4 flex justify-between">
                 <span className="text-lg font-semibold">Total</span>
-                <span>${(total + total * 0.18).toFixed(2)}</span>
+                <span>{formatINR(total + total * 0.18)}</span>
               </div>
 
               {authUser && (

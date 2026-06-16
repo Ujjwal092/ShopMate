@@ -40,7 +40,7 @@ const Chatbot = () => {
           text: data?.reply || "Sorry, I couldn't process that. Try again!",
         },
       ]);
-    } catch (err) {
+    } catch {
       setChat((prev) => [
         ...prev,
         { from: "bot", text: "Connection error — please try again." },

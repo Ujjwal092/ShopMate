@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { toast } from "react-toastify";
+import { axiosInstance } from "../lib/axios";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -8,11 +10,37 @@ const Contact = () => {
     subject: "",
     message: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [subscribe, setSubscribe] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Message sent successfully!");
-    setFormData({ name: "", email: "", subject: "", message: "" });
+    setLoading(true);
+    try {
+      const { data } = await axiosInstance.post('/contact/send', {
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+      });
+
+      // If user opted to subscribe, call newsletter endpoint
+      if (subscribe && formData.email) {
+        try {
+          await axiosInstance.post('/newsletter/subscribe', { email: formData.email });
+        } catch {
+          // ignore newsletter errors
+        }
+      }
+
+      toast.success(data.message || 'Message sent successfully');
+      setFormData({ name: '', email: '', subject: '', message: '' });
+      setSubscribe(false);
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message || 'Failed to send message');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -113,12 +141,24 @@ const Contact = () => {
                 required
               />
 
+              <div className="flex items-center space-x-3">
+                <input
+                  id="subscribe"
+                  type="checkbox"
+                  checked={subscribe}
+                  onChange={(e) => setSubscribe(e.target.checked)}
+                  className="w-4 h-4 rounded"
+                />
+                <label htmlFor="subscribe" className="text-sm text-muted-foreground">Stay in the loop — subscribe to our newsletter</label>
+              </div>
+
               <button
                 type="submit"
-                className="w-full flex items-center justify-center space-x-2 p-3 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover font-semibold transition-all"
+                disabled={loading}
+                className="w-full flex items-center justify-center space-x-2 p-3 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover font-semibold transition-all disabled:opacity-50"
               >
                 <Send className="w-5 h-5" />
-                <span>Send Message</span>
+                <span>{loading ? 'Sending...' : 'Send Message'}</span>
               </button>
             </form>
           </div>

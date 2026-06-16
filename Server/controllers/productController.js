@@ -5,6 +5,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { getAIRecommendation } from "../utils/getAIRecommendation.js";
 import { findSimilarProducts } from "../utils/knnRecommendation.js";
 import axios from "axios";
+import { notifyStockAlertSubscribers } from "./stockAlertController.js";
 
 export const createProduct = catchAsyncErrors(async (req, res, next) => {
   const { name, description, price, category, stock } = req.body;
@@ -197,10 +198,31 @@ export const fetchAllProducts = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+export const fetchProductsByIds = catchAsyncErrors(async (req, res, next) => {
+const ids = req.query.ids ? req.query.ids.split(",").filter(Boolean) : [];
+if (ids.length === 0) {
+   return res.status(200).json({ success: true, products: [] });
+}
+
+const result = await database.query(
+   `
+     SELECT p.*, COUNT(r.id) AS review_count
+     FROM products p
+     LEFT JOIN reviews r ON p.id = r.product_id
+     WHERE p.id = ANY($1::uuid[])
+     GROUP BY p.id
+     ORDER BY array_position($1::uuid[], p.id)
+   `,
+   [ids],
+);
+
+res.status(200).json({ success: true, products: result.rows });
+});
+
 /*params?? req.params; kya hai
-  so let say http://localhost:4000//password/reset/:token for resetpassword controller
-  here token is params
-  if http://localhost:4000//products?category=Smartphones
+so let say http://localhost:4000//password/reset/:token for resetpassword controller
+here token is params
+if http://localhost:4000//products?category=Smartphones
    here this is query
 */
 
@@ -224,12 +246,17 @@ export const updateProduct = catchAsyncErrors(async (req, res, next) => {
   if (product.rows.length === 0) {
     return next(new ErrorHandler("Product not found", 404));
   }
-  //use currency converter api
+
+  const previousStock = product.rows[0].stock;
   const result = await database.query(
     `UPDATE products SET name = $1 , description= $2, price=$3, category = $4, stock=$5 WHERE id= $6 
     RETURNING *`,
     [name, description, price, category, stock, productID],
   );
+
+  if (previousStock === 0 && stock > 0) {
+    await notifyStockAlertSubscribers(productID, result.rows[0].name);
+  }
 
   res.status(200).json({
     success: true,

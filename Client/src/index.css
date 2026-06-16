@@ -277,4 +277,26 @@
     transform-origin: center;
     will-change: transform;
   }
+
+  /* High contrast accessibility mode */
+  .high-contrast {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+  }
+
+  .high-contrast body, .high-contrast .glass-card, .high-contrast .glass-panel {
+    background-color: #000 !important;
+    color: #fff !important;
+    border-color: #fff !important;
+    box-shadow: none !important;
+  }
+
+  .high-contrast a, .high-contrast .text-primary, .high-contrast .gradient-primary {
+    color: #ffff00 !important;
+  }
+
+  :focus {
+    outline: 3px solid #ffd54f;
+    outline-offset: 2px;
+  }
 }

@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Filter, Package, Truck, CheckCircle, XCircle } from "lucide-react";
+import { Filter, Package, Truck, CheckCircle, XCircle, Download, X, Clock } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { fetchMyOrders } from "../store/slices/orderSlice";
+import { jsPDF } from "jspdf";
+import { fetchMyOrders, cancelOrder } from "../store/slices/orderSlice";
+import { addToCart } from "../store/slices/cartSlice";
+import { formatINR } from "../lib/currency";
 
 const Orders = () => {
   const [statusFilter, setStatusFilter] = useState("All");
+  const [now, setNow] = useState(() => Date.now());
   const { myOrders, isLoading } = useSelector((state) => state.order);
   const { authUser } = useSelector((state) => state.auth);
 
@@ -18,6 +22,13 @@ const Orders = () => {
       navigateTo("/products");
     }
   }, [authUser, navigateTo]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Fetch orders
   useEffect(() => {
@@ -62,6 +73,90 @@ const Orders = () => {
   };
 
   const statusArray = ["All", "Processing", "Shipped", "Delivered", "Cancelled"];
+
+  const getCancelTimer = (createdAt) => {
+    const createdTime = new Date(createdAt).getTime();
+    const remaining = 15 * 60 * 1000 - (now - createdTime);
+    if (remaining <= 0) return null;
+    const minutes = Math.floor(remaining / 60000);
+    const seconds = Math.floor((remaining % 60000) / 1000);
+    return `${minutes}m ${seconds}s`;
+  };
+
+  const canCancelOrder = (order) => {
+    return (
+      order.order_status === "Processing" &&
+      getCancelTimer(order.created_at) !== null
+    );
+  };
+
+  const handleViewDetails = (order) => {
+    navigateTo(`/orders/${order.id}`);
+  };
+
+  const handleWriteReview = (order) => {
+    const firstDeliveredItem = order.order_items?.[0];
+    if (!firstDeliveredItem) return;
+    navigateTo(`/product/${firstDeliveredItem.product_id}?tab=reviews`);
+  };
+
+  const handleReorder = (order) => {
+    order.order_items?.forEach((item) => {
+      dispatch(
+        addToCart({
+          product: {
+            id: item.product_id,
+            name: item.title,
+            price: item.price,
+            images: [{ url: item.image }],
+            category: item.category || "ShopMate",
+          },
+          quantity: item.quantity,
+        }),
+      );
+    });
+    navigateTo("/cart");
+  };
+
+  const downloadInvoice = (order) => {
+    const doc = new jsPDF();
+    const orderDate = new Date(order.created_at).toLocaleString();
+    doc.setFontSize(18);
+    doc.text("ShopMate Order Invoice", 14, 20);
+    doc.setFontSize(11);
+    doc.text(`Order #: ${order.id}`, 14, 32);
+    doc.text(`Order Date: ${orderDate}`, 14, 38);
+    doc.text(`Status: ${order.order_status}`, 14, 44);
+    doc.text(`Total: ${formatINR(order.total_price)}`, 14, 50);
+    doc.text("Shipping Info:", 14, 60);
+    doc.setFontSize(10);
+    doc.text(`Name: ${order.shipping_info?.full_name || "-"}`, 14, 66);
+    doc.text(`Address: ${order.shipping_info?.address || "-"}`, 14, 72);
+    doc.text(`City: ${order.shipping_info?.city || "-"}`, 14, 78);
+    doc.text(`State: ${order.shipping_info?.state || "-"}`, 14, 84);
+    doc.text(`Phone: ${order.shipping_info?.phone || "-"}`, 14, 90);
+    doc.text("Items:", 14, 102);
+
+    let currentY = 108;
+    order.order_items?.forEach((item, index) => {
+      if (currentY > 250) {
+        doc.addPage();
+        currentY = 20;
+      }
+      doc.text(
+        `${index + 1}. ${item.title} x${item.quantity} - ${formatINR(
+          item.price,
+        )}`,
+        14,
+        currentY,
+      );
+      currentY += 8;
+    });
+
+    doc.setFontSize(12);
+    doc.text(`Grand Total: ${formatINR(order.total_price)}`, 14, currentY + 12);
+    doc.save(`invoice-${order.id}.pdf`);
+  };
 
   // Show loader if fetching orders
   if (isLoading) {
@@ -151,7 +246,7 @@ const Orders = () => {
 
                     <div className="text-right">
                       <p className="text-sm text-muted-foreground">Total</p>
-                      <p className="text-xl font-bold text-primary">${order.total_price}</p>
+                      <p className="text-xl font-bold text-primary">{formatINR(order.total_price)}</p>
                     </div>
                   </div>
                 </div>
@@ -174,7 +269,7 @@ const Orders = () => {
                         <p className="text-sm text-muted-foreground">Quantity: {item.quantity}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-foreground">${item.price}</p>
+                        <p className="font-semibold text-foreground">{formatINR(item.price)}</p>
                       </div>
                     </div>
                   ))}
@@ -182,19 +277,58 @@ const Orders = () => {
 
                 {/* ORDER ACTIONS */}
                 <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-[hsla(var(--glass-border))]">
-                  <button className="px-4 py-2 glass-card hover:glow-on-hover animate-smooth text-sm">
+                  <button
+                    onClick={() => handleViewDetails(order)}
+                    className="px-4 py-2 glass-card hover:glow-on-hover animate-smooth text-sm"
+                  >
                     View Details
                   </button>
-                  <button className="px-4 py-2 glass-card hover:glow-on-hover animate-smooth text-sm">
+                  <button
+                    onClick={() => handleViewDetails(order)}
+                    className="px-4 py-2 glass-card hover:glow-on-hover animate-smooth text-sm"
+                  >
                     Track Order
                   </button>
-                
+
+                  <button
+                    onClick={() => downloadInvoice(order)}
+                    className="px-4 py-2 glass-card hover:glow-on-hover animate-smooth text-sm flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    Download Invoice
+                  </button>
+
+                  {canCancelOrder(order) && (
+                    <button
+                      onClick={() => dispatch(cancelOrder(order.id))}
+                      className="px-4 py-2 glass-card hover:glow-on-hover animate-smooth text-sm text-yellow-600"
+                    >
+                      <span className="flex items-center gap-2">
+                        <X className="w-4 h-4" />
+                        Cancel Order
+                      </span>
+                    </button>
+                  )}
+
+                  {order.order_status === "Processing" && getCancelTimer(order.created_at) && (
+                    <div className="px-4 py-2 bg-yellow-500/10 text-yellow-600 rounded-lg text-sm flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      Cancel available for {getCancelTimer(order.created_at)}
+                    </div>
+                  )}
+
                   {order.order_status === "Delivered" && (
                     <>
-                      <button className="px-4 py-2 glass-card hover:glow-on-hover animate-smooth text-sm">
+                      <button
+                        onClick={() => handleWriteReview(order)}
+                        className="px-4 py-2 glass-card hover:glow-on-hover animate-smooth text-sm"
+                      >
                         Write Review
-                      </button> 
-                      <button className="px-4 py-2 glass-card hover:glow-on-hover animate-smooth text-sm">
+                      </button>
+                      <button
+                        onClick={() => handleReorder(order)}
+                        className="px-4 py-2 glass-card hover:glow-on-hover animate-smooth text-sm"
+                      >
                         Reorder
                       </button>
                     </>

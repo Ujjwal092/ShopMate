@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Check } from "lucide-react";
+import { formatINR } from "../lib/currency";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Elements } from "@stripe/react-stripe-js";
@@ -368,7 +369,7 @@ const Payment = () => {
                             </p>
                           </div>
                           <p className="text-sm font-semibold">
-                            ${Number(item.product.price) * item.quantity}
+                                                      {formatINR(Number(item.product.price) * item.quantity)}
                           </p>
                         </div>
                       );
@@ -378,23 +379,23 @@ const Payment = () => {
                   <div className="space-y-2 border-t border-[hsla(var(--glass-border))] pt-4">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Subtotal</span>
-                      <span>${total.toFixed(2)}</span>
+                      <span>{formatINR(total)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Shipping</span>
                       <span className="text-green-500">
-                        {totalWithTax >= 50 ? "Free" : "$2"}
+                        {totalWithTax >= 50 ? "Free" : formatINR(2)}
                       </span>
                     </div>
 
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Taxes</span>
-                      <span>{(total * 0.18).toFixed(2)}</span>
+                      <span>{formatINR(total * 0.18)}</span>
                     </div>
                     <div className="flex justify-between font-semibold text-lg pt-2 border-t border-[hsla(var(--glass-border))]">
                       <span>Total Price</span>
                       <span className="text-primary">
-                        ${totalWithTax.toFixed(2)}
+                                              {formatINR(totalWithTax)}
                       </span>
                     </div>
                   </div>

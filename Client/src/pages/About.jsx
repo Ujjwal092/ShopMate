@@ -1,6 +1,5 @@
 import { Users, Target, Award, Heart } from "lucide-react";
 "use client";
-import { motion } from "framer-motion";
 
 const About = () => {
   const values = [

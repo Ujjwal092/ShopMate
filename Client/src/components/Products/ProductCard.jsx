@@ -3,6 +3,8 @@ import { Star, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../store/slices/cartSlice";
+import { formatINR } from "../../lib/currency";
+import LazyImage from "../Home/LazyImage";
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
@@ -20,10 +22,10 @@ const ProductCard = ({ product }) => {
       >
         {/* PRODUCT IMAGE */}
         <div className="relative overflow-hidden rounded-lg mb-4">
-          <img
-            src={product.images[0].url}
+        <LazyImage
+          src={product.images?.[0]?.url}
             alt={product.name}
-            className="w-full h-48 object-contain group-hover:scale-110 transition-transform duration-300"
+          className="w-full h-48"
           />
 
           {/* BADGES */}
@@ -83,7 +85,7 @@ const ProductCard = ({ product }) => {
           {/* PRODUCT PRICE */}
           <div className="flex items-center space-x-2">
             <span className="text-xl font-bold text-primary">
-              ${product.price}
+                          {formatINR(product.price)}
             </span>
           </div>
 

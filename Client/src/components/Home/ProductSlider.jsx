@@ -1,5 +1,7 @@
 import { useRef } from "react";
 import { ChevronLeft, ChevronRight, Star, ShoppingCart } from "lucide-react";
+import { formatINR } from "../../lib/currency";
+import LazyImage from "./LazyImage";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../store/slices/cartSlice";
@@ -61,10 +63,10 @@ const ProductSlider = ({ title, products }) => {
               >
                 {/* PRODUCT IMAGE */}
                 <div className="relative overflow-hidden rounded-lg mb-4">
-                  <img
+                  <LazyImage
                     src={product.images?.[0]?.url || "/placeholder.png"}
                     alt={product.name || "Product Image"}
-                    className="w-full h-48 object-contain group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-48 rounded-lg"
                   />
 
                   {/* BADGES */}
@@ -125,7 +127,7 @@ const ProductSlider = ({ title, products }) => {
                   {/* PRODUCT PRICE */}
                   <div className="flex items-center space-x-2">
                     <span className="text-xl font-bold text-primary">
-                      ${product.price}
+                                          {formatINR(product.price)}
                     </span>
                   </div>
 

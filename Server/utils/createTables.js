@@ -8,6 +8,8 @@ import { createShippingInfoTable } from "../models/shippinginfoTable.js";
 import { createNewsletterTable } from "../models/newsletterModel.js";
 import { createContactMessagesTable } from "../models/contactModel.js";
 import { createWishlistTable } from "../models/wishlistModel.js";
+import { createTestimonialTable } from "../models/testimonialModel.js";
+import { createStockAlertsTable } from "../models/stockAlertModel.js";
 
 export const createTables = async () => {
   try {
@@ -21,6 +23,8 @@ export const createTables = async () => {
     await createNewsletterTable();
     await createContactMessagesTable();
     await createWishlistTable();
+    await createTestimonialTable();
+    await createStockAlertsTable();
     console.log("All Tables Created Successfully.");
   } catch (error) {
     console.error("Error creating tables:", error);

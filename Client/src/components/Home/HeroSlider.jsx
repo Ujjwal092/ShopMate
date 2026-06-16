@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { getVariant } from "../../lib/abTest";
 
 const HeroSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -42,7 +43,7 @@ const HeroSlider = () => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 8000);
     return () => clearInterval(timer);
-  }, []);
+  }, [slides.length]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -52,7 +53,9 @@ const HeroSlider = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
+  const variant = getVariant('hero');
   const slide = slides[currentSlide];
+  const ctaText = variant === 'B' ? slide.cta + " - Extra 5%" : slide.cta;
 
   return (
     <div className="relative h-[70vh] overflow-hidden rounded-2xl">
@@ -78,7 +81,7 @@ const HeroSlider = () => {
               to={slide.url}
               className="px-8 py-4 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-semibold text-lg"
             >
-              {slide.cta}
+              {ctaText}
             </Link>
           </div>
         </div>
