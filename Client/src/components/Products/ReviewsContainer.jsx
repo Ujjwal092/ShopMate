@@ -97,26 +97,9 @@ const ReviewsContainer = ({ product, productReviews }) => {
                       </div>
                     </div>
 
-                    {/* <p className="text-muted-foreground mb-2">
+                    <p className="text-muted-foreground mb-2">
                       {review.comment}
-                    </p> */}
-                    {review.sentiment && (
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full font-medium mt-1 inline-block ${
-                          review.sentiment === "positive"
-                            ? "bg-green-100 text-green-700"
-                            : review.sentiment === "negative"
-                              ? "bg-red-100 text-red-700"
-                              : "bg-yellow-100 text-yellow-700"
-                        }`}
-                      >
-                        {review.sentiment === "positive"
-                          ? "😊 Positive"
-                          : review.sentiment === "negative"
-                            ? "😞 Negative"
-                            : "😐 Negative"}
-                      </span>
-                    )}
+                    </p>
 
                     {authUser?.id === review.reviewer?.id && (
                       <button

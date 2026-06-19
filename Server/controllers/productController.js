@@ -68,12 +68,12 @@ export const createProduct = catchAsyncErrors(async (req, res, next) => {
 export const fetchAllProducts = catchAsyncErrors(async (req, res, next) => {
   const { availability, price, category, ratings, search } = req.query;
 
-  const page = parseInt(req.query.page) || 1; //bydefault in page 1
-  //but if page requested by user store it in page
+  const page = parseInt(req.query.page) || 1; // fallback value if page is not provided or invalid and let say req.query.page is string so parseInt convert it into number and if empty toh parseInt(NaN) so fallback value is 1
 
   const limit = 10;
-
-  const offset = (page - 1) * limit; //6 page pr jo product hai wo dekhao
+  //  "Because page numbering starts from 1, while database row offset starts from 0. So for page 3 and limit 10, we skip first 20 records and fetch the next 10."
+  const offset = (page - 1) * limit;
+  // if user ask 6 page pr jo product hai wo dekhao
   //so 5*10 = 50 prdoucts  so offset 50 ke baad wle 10 product lake dega
 
   const conditions = [];
@@ -92,6 +92,8 @@ export const fetchAllProducts = catchAsyncErrors(async (req, res, next) => {
 
   //filter products by price
   // price == ['1000-10000'];
+
+  //INDEX YHA PR ISLIYE HAI KYOKI PRICE ME 2 VALUE HAI MIN AND MAX TO USKE LIYE 2 PLACEHOLDER CHAHIYE AND +2 KRNE SE AGLE PLACEHOLDER PR CHALA JAYEGA OR BAAD M CATEGORY AND RATING KE LIYE BHI SIRF EK EK PLACEHOLDER CHAHIYE TO USKE LIYE +1 KRNE SE AGLE PLACEHOLDER PR CHALA JAYEGA
 
   if (price) {
     const [minPrice, maxPrice] = price.split("-");
@@ -127,6 +129,7 @@ export const fetchAllProducts = catchAsyncErrors(async (req, res, next) => {
     index++;
   }
 
+  //conditions is array of all conditions and join them with AND and if no condition then whereClause is empty string and is used in query to fetch products
   const whereClause = conditions.length
     ? `WHERE ${conditions.join(" AND ")}`
     : "";
@@ -162,7 +165,9 @@ export const fetchAllProducts = catchAsyncErrors(async (req, res, next) => {
 
   const result = await database.query(query, values);
 
-  // QUERY FOR FETCHING NEW PRODUCTS
+  // QUERY FOR FETCHING NEW PRODUCTS jo 30 days me create hue hai and left join kr rhe hai reviews se taki review count bhi mil jaye and agar review nhi hai toh bhi product show hoga coz left join hai and group by kr rhe id se taki har product alag row me aaye and order by kr rhe created_at se taki naye product pehle aaye and limit 8 kr rhe taki sirf 8 product show ho
+
+  //us prdouct ki review nikalna h isliye v left join
   const newProductsQuery = `
     SELECT p.*,
     COUNT(r.id) AS review_count
@@ -173,10 +178,14 @@ export const fetchAllProducts = catchAsyncErrors(async (req, res, next) => {
     ORDER BY p.created_at DESC
     LIMIT 8
   `;
+  //new products ka result store kr rhe database se query karke and uske baad response me bhej rhe client ko taki client naye product bhi dikha ske homepage pr
+
   const newProductsResult = await database.query(newProductsQuery);
 
   // QUERY FOR FETCHING TOP RATING PRODUCTS (rating >= 4.5)
   //sara data from product table and left join with reveiws ke product_id se only that will be given
+
+  // if rating of product is >= 4.5 it will be top rated
   const topRatedQuery = `
     SELECT p.*,
     COUNT(r.id) AS review_count
@@ -198,14 +207,16 @@ export const fetchAllProducts = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-export const fetchProductsByIds = catchAsyncErrors(async (req, res, next) => {
-const ids = req.query.ids ? req.query.ids.split(",").filter(Boolean) : [];
-if (ids.length === 0) {
-   return res.status(200).json({ success: true, products: [] });
-}
+//named export only be imported with same name and in curly braces and we can have multiple named export in a file and default export can be imported with any name and without curly braces and only one default export is allowed in a file
 
-const result = await database.query(
-   `
+export const fetchProductsByIds = catchAsyncErrors(async (req, res, next) => {
+  const ids = req.query.ids ? req.query.ids.split(",").filter(Boolean) : [];
+  if (ids.length === 0) {
+    return res.status(200).json({ success: true, products: [] });
+  }
+
+  const result = await database.query(
+    `
      SELECT p.*, COUNT(r.id) AS review_count
      FROM products p
      LEFT JOIN reviews r ON p.id = r.product_id
@@ -213,21 +224,15 @@ const result = await database.query(
      GROUP BY p.id
      ORDER BY array_position($1::uuid[], p.id)
    `,
-   [ids],
-);
+    [ids],
+  );
 
-res.status(200).json({ success: true, products: result.rows });
+  res.status(200).json({ success: true, products: result.rows });
 });
 
-/*params?? req.params; kya hai
-so let say http://localhost:4000//password/reset/:token for resetpassword controller
-here token is params
-if http://localhost:4000//products?category=Smartphones
-   here this is query
-*/
-
+//update product m he back in stock alert bhej rhe hai user ko agar stock 0 se >0 hua toh
 export const updateProduct = catchAsyncErrors(async (req, res, next) => {
-  const { productID } = req.params; //updating product based on id
+  const { productID } = req.params; //updating product based on id and productID is coming from params and req.params is an object containing properties mapped to the named route "parameters". For example, if you have a route defined as /products/:productID, and a request is made to /products/123, then req.params.productID will be '123'.
 
   const { name, description, price, category, stock } = req.body;
 
@@ -247,15 +252,33 @@ export const updateProduct = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Product not found", 404));
   }
 
+  //US product ki stock value store kr rhe previousStock me taki update hone ke baad check kr ske ki stock 0 se >0 hua ya nhi aur agar hua toh notify kr ske subscribers ko
   const previousStock = product.rows[0].stock;
+
+  // product ko result main store krle
   const result = await database.query(
     `UPDATE products SET name = $1 , description= $2, price=$3, category = $4, stock=$5 WHERE id= $6 
     RETURNING *`,
     [name, description, price, category, stock, productID],
   );
 
+  // Notify subscribers if product goes from out of stock to in stock
+  //mtlb phle out of stock tha and aab stock m h toh bta do user ko isliye uska controller call krke
   if (previousStock === 0 && stock > 0) {
-    await notifyStockAlertSubscribers(productID, result.rows[0].name);
+    try {
+      console.log(
+        `📧 Triggering stock alert for product: ${result.rows[0].name}`,
+      );
+      await notifyStockAlertSubscribers(productID, result.rows[0].name);
+      console.log(
+        `✅ Stock alert notifications sent for product: ${result.rows[0].name}`,
+      );
+    } catch (error) {
+      console.error(
+        `❌ Failed to send stock alerts for ${result.rows[0].name}:`,
+        error.message,
+      );
+    }
   }
 
   res.status(200).json({
@@ -275,7 +298,7 @@ export const deleteProduct = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Product not found.", 404));
   }
 
-  //first store images then delete coz later will not be able to access image on this id
+  //first store images then delete coz later will not be able to access image on this id and images is an array of objects with url and public_id
   const images = product.rows[0].images;
 
   const deleteResult = await database.query(
@@ -341,15 +364,13 @@ export const fetchSingleProduct = catchAsyncErrors(async (req, res, next) => {
 //after payment integration
 export const postProductReview = catchAsyncErrors(async (req, res, next) => {
   const { productId } = req.params;
-
   const { rating, comment } = req.body;
 
   if (!rating || !comment) {
     return next(new ErrorHandler("Please provide rating and comment.", 400));
   }
-  //purchase before review
-  //oi -> order items table se product_id niklo
 
+  // Purchase before review
   const purchasheCheckQuery = `
     SELECT oi.product_id
     FROM order_items oi
@@ -358,7 +379,7 @@ export const postProductReview = catchAsyncErrors(async (req, res, next) => {
     WHERE o.buyer_id = $1
     AND oi.product_id = $2
     AND p.payment_status = 'Paid'
-    LIMIT 1 
+    LIMIT 1
   `;
 
   const { rows } = await database.query(purchasheCheckQuery, [
@@ -367,7 +388,6 @@ export const postProductReview = catchAsyncErrors(async (req, res, next) => {
   ]);
 
   if (rows.length === 0) {
-    //as it is not a error coz not purchase is not an error so just send response
     return res.status(403).json({
       success: false,
       message: "You can only review a product you've purchased.",
@@ -384,69 +404,65 @@ export const postProductReview = catchAsyncErrors(async (req, res, next) => {
 
   const isAlreadyReviewed = await database.query(
     `
-    SELECT * FROM reviews WHERE product_id = $1 AND user_id = $2
+      SELECT * FROM reviews
+      WHERE product_id = $1 AND user_id = $2
     `,
     [productId, req.user.id],
   );
 
-  // ML Service se sentiment lo
-  let sentiment = "neutral";
-  try {
-    const mlResponse = await axios.post("http://localhost:5001/analyze", {
-      review: comment,
-    });
-    sentiment = mlResponse.data.sentiment;
-    console.log("Sentiment detected:", sentiment);
-  } catch (err) {
-    console.log("ML service unavailable, using default:", err.message);
-  }
-
   let review;
+
+  // Update existing review
   if (isAlreadyReviewed.rows.length > 0) {
     review = await database.query(
-      "UPDATE reviews SET rating = $1, comment = $2, sentiment = $3 WHERE product_id = $4 AND user_id = $5 RETURNING *",
-      [rating, comment, sentiment, productId, req.user.id],
+      `
+        UPDATE reviews
+        SET rating = $1, comment = $2
+        WHERE product_id = $3 AND user_id = $4
+        RETURNING *
+      `,
+      [rating, comment, productId, req.user.id],
     );
-  } else {
+  }
+  // Insert new review
+  else {
     review = await database.query(
-      "INSERT INTO reviews (product_id, user_id, rating, comment, sentiment) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [productId, req.user.id, rating, comment, sentiment],
+      `
+        INSERT INTO reviews
+        (product_id, user_id, rating, comment)
+        VALUES ($1, $2, $3, $4)
+        RETURNING *
+      `,
+      [productId, req.user.id, rating, comment],
     );
   }
 
-  // let review;
-  //  //if already reviewd just update else insert
-  // if (isAlreadyReviewed.rows.length > 0) {
-  //   review = await database.query(
-  //     "UPDATE reviews SET rating = $1, comment = $2 WHERE product_id = $3 AND user_id = $4 RETURNING *",
-  //     [rating, comment, productId, req.user.id]
-  //   );
-  // } else {
-  //   review = await database.query(
-  //     "INSERT INTO reviews (product_id, user_id, rating, comment) VALUES ($1, $2, $3, $4) RETURNING *",
-  //     [productId, req.user.id, rating, comment] //should be seq
-  //   );
-  // }
-
-  //all reviews of same product and take a average
+  // Calculate new average rating
   const allReviews = await database.query(
-    `SELECT AVG(rating) AS avg_rating FROM reviews WHERE product_id = $1`,
+    `
+      SELECT AVG(rating) AS avg_rating
+      FROM reviews
+      WHERE product_id = $1
+    `,
     [productId],
   );
 
   const newAvgRating = allReviews.rows[0].avg_rating;
 
-  //update products table with new ratings on base of id of prod
+  // Update product rating
   const updatedProduct = await database.query(
     `
-        UPDATE products SET ratings = $1 WHERE id = $2 RETURNING *
-        `,
+      UPDATE products
+      SET ratings = $1
+      WHERE id = $2
+      RETURNING *
+    `,
     [newAvgRating, productId],
   );
 
   res.status(200).json({
     success: true,
-    message: "Review posted.",
+    message: "Review posted successfully.",
     review: review.rows[0],
     product: updatedProduct.rows[0],
   });

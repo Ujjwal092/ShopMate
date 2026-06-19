@@ -18,6 +18,7 @@ import testimonialRouter from "./routes/testimonialRoutes.js";
 import stockAlertRouter from "./routes/stockAlertRoutes.js";
 import dotenv from "dotenv";
 import wishlistRouter from "./routes/wishlistRoutes.js";
+import testRoutes from "./routes/testRoutes.js";
 dotenv.config({ path: "./.env" });
 
 const app = express();
@@ -112,6 +113,7 @@ app.use("/api/v1/contact", contactRouter);
 app.use("/api/v1/testimonials", testimonialRouter);
 app.use("/api/v1/stock-alerts", stockAlertRouter);
 app.use("/api/v1/wishlist", wishlistRouter);
+app.use("/api/v1/test", testRoutes); // Test endpoint for debugging
 // console.log(app._router?.stack?.length);
 
 app.use(errorMiddleware);

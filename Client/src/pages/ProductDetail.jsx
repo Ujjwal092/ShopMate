@@ -232,34 +232,41 @@ const ProductDetail = () => {
                 </div>
 
                 {product.stock === 0 && (
-                  <div className="glass-card p-6 mb-6 border border-amber-300 bg-amber-50/50">
-                    <h3 className="text-xl font-semibold text-foreground mb-2">
-                      Notify me when available
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      This product is out of stock. Enter your email and we will notify you as soon as it is back.
-                    </p>
+                  <div className="glass-card p-6 mb-6 border-l-4 border-orange-500 bg-gradient-to-r from-orange-500/10 to-transparent rounded-lg">
+                    <div className="flex items-start gap-4">
+                      <div className="mt-1">
+                        <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-foreground mb-1">
+                          📩 Notify me when available
+                        </h3>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          Out of stock now, but we'll email you as soon as it's back!
+                        </p>
 
-                    <form
-                      onSubmit={handleStockAlert}
-                      className="grid gap-3 md:grid-cols-[1fr_auto]"
-                    >
-                      <input
-                        type="email"
-                        value={alertEmail}
-                        onChange={(e) => setAlertEmail(e.target.value)}
-                        className="w-full px-4 py-3 bg-white border border-border rounded-lg text-foreground"
-                        placeholder="Enter your email"
-                        disabled={alertRequested}
-                      />
-                      <button
-                        type="submit"
-                        disabled={alertRequested}
-                        className="px-5 py-3 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-semibold"
-                      >
-                        {alertRequested ? "Subscribed" : "Notify Me"}
-                      </button>
-                    </form>
+                        <form
+                          onSubmit={handleStockAlert}
+                          className="flex gap-2"
+                        >
+                          <input
+                            type="email"
+                            value={alertEmail}
+                            onChange={(e) => setAlertEmail(e.target.value)}
+                            className="flex-1 px-4 py-2.5 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition"
+                            placeholder="your@email.com"
+                            disabled={alertRequested}
+                          />
+                          <button
+                            type="submit"
+                            disabled={alertRequested}
+                            className="px-6 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                          >
+                            {alertRequested ? "✓ Subscribed" : "Notify"}
+                          </button>
+                        </form>
+                      </div>
+                    </div>
                   </div>
                 )}
 

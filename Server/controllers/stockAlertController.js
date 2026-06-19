@@ -7,6 +7,7 @@ import {
   getPendingStockAlertsForProduct,
   markStockAlertsNotified,
 } from "../models/stockAlertModel.js";
+import { generateStockAlertEmailTemplate } from "../utils/generateStockAlertEmailTemplate.js";
 
 export const subscribeStockAlert = catchAsyncErrors(async (req, res, next) => {
   const { productId, email } = req.body;
@@ -37,31 +38,89 @@ export const subscribeStockAlert = catchAsyncErrors(async (req, res, next) => {
 
   res.status(201).json({
     success: true,
-    message: `You will be notified when ${product.rows[0].name} is back in stock.`,
+    message: `✅ You'll be notified when ${product.rows[0].name} is back in stock!`,
   });
 });
 
 export const notifyStockAlertSubscribers = async (productId, productName) => {
-  const alertResult = await getPendingStockAlertsForProduct(productId);
-  const alerts = alertResult.rows;
-  if (alerts.length === 0) return;
+  try {
+    const alertResult = await getPendingStockAlertsForProduct(productId);
+    const alerts = alertResult.rows;
+    
+    if (alerts.length === 0) {
+      console.log(`ℹ️ No pending stock alerts for product: ${productName}`);
+      return;
+    }
 
-  const alertIds = alerts.map((alert) => alert.id);
+    console.log(
+      `📧 Found ${alerts.length} subscribers for product: ${productName}`,
+    );
 
-  await Promise.all(
-    alerts.map(async (alert) => {
-      try {
-        const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
-        await sendEmail({
-          email: alert.email,
-          subject: `${productName} is back in stock!`,
-          message: `Good news! The product <strong>${productName}</strong> is back in stock. <br/><br/>Visit the product page to order now: <a href="${frontendUrl}/product/${productId}">View Product</a>`,
-        });
-      } catch (error) {
-        console.error(`Failed to send stock alert to ${alert.email}:`, error);
-      }
-    }),
-  );
+    const alertIds = alerts.map((alert) => alert.id);
 
-  await markStockAlertsNotified(alertIds);
+    // Fetch product details for the email template
+    const productResult = await database.query(
+      `SELECT images, price FROM products WHERE id = $1`,
+      [productId],
+    );
+
+    if (productResult.rows.length === 0) {
+      console.error(
+        `❌ Product not found for stock alert notification: ${productId}`,
+      );
+      return;
+    }
+
+    const productImage = productResult.rows[0]?.images?.[0]?.url || null;
+    const productPrice = productResult.rows[0]?.price || "N/A";
+
+    console.log(
+      `📦 Product Details - Name: ${productName}, Price: ${productPrice}, Image: ${
+        productImage ? "Available" : "Not Available"
+      }`,
+    );
+
+    let sentCount = 0;
+    let failedCount = 0;
+
+    await Promise.all(
+      alerts.map(async (alert) => {
+        try {
+          const emailTemplate = generateStockAlertEmailTemplate(
+            productName,
+            productImage,
+            productPrice,
+            productId,
+          );
+
+          await sendEmail({
+            email: alert.email,
+            subject: `🎉 ${productName} is back in stock!`,
+            message: emailTemplate,
+          });
+          sentCount++;
+          console.log(
+            `✅ Stock alert email sent to ${alert.email} for "${productName}"`,
+          );
+        } catch (error) {
+          failedCount++;
+          console.error(
+            `❌ Failed to send stock alert to ${alert.email}:`,
+            error.message,
+          );
+        }
+      }),
+    );
+
+    console.log(
+      `📊 Stock Alert Summary - Sent: ${sentCount}, Failed: ${failedCount}`,
+    );
+
+    await markStockAlertsNotified(alertIds);
+  } catch (error) {
+    console.error(
+      `❌ Error in notifyStockAlertSubscribers for product ${productId}:`,
+      error.message,
+    );
+  }
 };

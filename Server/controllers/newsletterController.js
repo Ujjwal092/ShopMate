@@ -27,15 +27,29 @@ export const subscribeNewsletter = catchAsyncErrors(async (req, res, next) => {
 
   await createSubscriber(email);
 
-  await sendEmail({
-    email,
-    subject: "Welcome to CartSyy 🎉",
-    message: generateNewsletterEmailTemplate(email),
-  });
+  try {
+    await sendEmail({
+      email,
+      subject: "Welcome to CartSyy 🎉",
+      message: generateNewsletterEmailTemplate(email),
+    });
+    console.log(`📧 Newsletter welcome email sent to ${email}`);
+  } catch (emailError) {
+    console.error(
+      `⚠️ Newsletter email send failed for ${email}:`,
+      emailError.message,
+    );
+    return next(
+      new ErrorHandler(
+        "Subscription successful, but welcome email could not be sent. Please check your email settings.",
+        500,
+      ),
+    );
+  }
 
   res.status(201).json({
     success: true,
-    message: "Subscribed successfully.",
+    message: "Subscribed successfully. Check your email for confirmation.",
   });
 });
 export const fetchAllSubscribers = catchAsyncErrors(async (req, res, next) => {
