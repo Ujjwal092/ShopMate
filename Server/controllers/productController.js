@@ -331,6 +331,7 @@ export const fetchSingleProduct = catchAsyncErrors(async (req, res, next) => {
     //COALESE aggregate multiple tables data in obj format
     //r  means reviews table
     //FILTER(if review exist) if not return empty array explain remain
+    //p.* mtlb us product ka pura data  and uske andr reviews v chaiye toh aggregate kr diye
 
     `
         SELECT p.*,
@@ -370,7 +371,7 @@ export const postProductReview = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Please provide rating and comment.", 400));
   }
 
-  // Purchase before review
+  // Purchase before review and limit 1 means if user bought same prod multiple time then also 1 review will be allowed
   const purchasheCheckQuery = `
     SELECT oi.product_id
     FROM order_items oi
@@ -382,6 +383,7 @@ export const postProductReview = catchAsyncErrors(async (req, res, next) => {
     LIMIT 1
   `;
 
+  //aab upar wle query se ham check kr rhe hai ki user ne product kharida hai ya nhi aur agar kharida hai toh hi review post krne ka option milega and buyer_id and product id is coming from req.user.id and req.params.productId and payment_status is 'Paid' means user ne product kharida hai and limit 1 means agar user ne same product multiple time kharida hai toh bhi sirf 1 review allowed hoga
   const { rows } = await database.query(purchasheCheckQuery, [
     req.user.id,
     productId,
@@ -509,7 +511,7 @@ export const deleteReview = catchAsyncErrors(async (req, res, next) => {
 export const fetchAIFilteredProducts = catchAsyncErrors(
   async (req, res, next) => {
     const { userPrompt } = req.body;
-    console.log("userPrompt :", userPrompt);
+    // console.log("userPrompt :", userPrompt);
 
     //400 bad req
     if (!userPrompt) {
@@ -596,15 +598,20 @@ export const fetchAIFilteredProducts = catchAsyncErrors(
         "10",
       ]);
 
-      return query
-        .toLowerCase()
-        .replace(/[^\w\s]/g, "")
-        .split(/\s+/) //split on based of space
-        .filter((word) => !stopWords.has(word)) //remove stop words
-        .map((word) => `%${word}%`); //%% is used to convert word into sql query
+      //remove these stopping word
+      return (
+        query
+          .toLowerCase()
+          .replace(/[^\w\s]/g, "")
+          .split(/\s+/) //split on based of space
+          .filter((word) => !stopWords.has(word))
+          //aisa word lke dega jo stop word m nai h
+          .map((word) => `%${word}%`)
+      ); //%% is used to convert word into sql query
     };
 
-    const keywords = filterKeywords(userPrompt); //userPrompt is sending as query inside filterKeywords method
+    const keywords = filterKeywords(userPrompt);
+    //userPrompt is sending as query inside filterKeywords method
 
     // STEP 1: Basic SQL Filtering
     const result = await database.query(

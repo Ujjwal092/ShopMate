@@ -3,12 +3,13 @@ import { catchAsyncErrors } from "../middlewares/catchAsyncError.js";
 import database from "../database/db.js";
 import { v2 as cloudinary } from "cloudinary";
 
+//will be used in admin dashboard to get all users, delete user, get dashboard stats
 export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
 
   const totalUsersResult = await database.query(
     "SELECT COUNT(*) FROM users WHERE role = $1",
-    ["User"]
+    ["User"],
   );
 
   //will get the tuple of total Users
@@ -16,10 +17,10 @@ export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
 
   const offset = (page - 1) * 10; //skip a specified number of rows before returning the result set of a query
   // is LIMIT  -> Returns only the next row_count rows after the offset
- 
+
   const users = await database.query(
     "SELECT * FROM users WHERE role = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3",
-    ["User", 10, offset] //DESC->DESCENDING to get newest → oldest
+    ["User", 10, offset], //DESC->DESCENDING to get newest → oldest
   );
 
   res.status(200).json({
@@ -31,12 +32,11 @@ export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const deleteUser = catchAsyncErrors(async (req, res, next) => {
-  
-    const { id } = req.params;
+  const { id } = req.params;
 
   const deleteUser = await database.query(
     "DELETE FROM users WHERE id = $1 RETURNING *",
-    [id]
+    [id],
   ); //return user which we want to delete
 
   if (deleteUser.rows.length === 0) {
@@ -55,14 +55,13 @@ export const deleteUser = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
-  
   const today = new Date(); //2026-02-02T14:58:17.250Z format
- // console.log(today)
-  const todayDate = today.toISOString().split("T")[0]; // T se phle wla 0 index pr hai 
+  // console.log(today)
+  const todayDate = today.toISOString().split("T")[0]; // T se phle wla 0 index pr hai
 
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1); //todays date-1
-  const yesterdayDate = yesterday.toISOString().split("T")[0];//get date
+  const yesterdayDate = yesterday.toISOString().split("T")[0]; //get date
 
   const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
   /*  current year
@@ -72,13 +71,13 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
   const currentMonthEnd = new Date(
     today.getFullYear(),
     today.getMonth() + 1, // next month
-    0                     // 0 = previous month ka last day
+    0, // 0 = previous month ka last day
   );
 
   const previousMonthStart = new Date(
     today.getFullYear(),
     today.getMonth() - 1,
-    1
+    1,
   );
 
   const previousMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
@@ -99,8 +98,8 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
   const orderStatusCountsQuery = await database.query(`
       SELECT order_status, COUNT(*) FROM orders WHERE paid_at IS NOT NULL GROUP BY order_status
       `);
- 
-    //initial VALUE
+
+  //initial VALUE
   const orderStatusCounts = {
     Processing: 0,
     Shipped: 0,
@@ -117,7 +116,7 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
     `
     SELECT SUM(total_price) FROM orders WHERE created_at::date = $1 AND paid_at IS NOT NULL
     `,
-    [todayDate]
+    [todayDate],
   );
 
   const todayRevenue = parseFloat(todayRevenueQuery.rows[0].sum) || 0;
@@ -127,7 +126,7 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
     `
     SELECT SUM(total_price) FROM orders WHERE created_at::date = $1 AND paid_at IS NOT NULL  
     `,
-    [yesterdayDate] 
+    [yesterdayDate],
   );
   const yesterdayRevenue = parseFloat(yesterdayRevenueQuery.rows[0].sum) || 0;
 
@@ -142,7 +141,8 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
     FROM orders WHERE paid_at IS NOT NULL
     GROUP BY month, date
     ORDER BY date ASC
-    `);
+    `,
+  );
 
   const monthlySales = monthlySalesQuery.rows.map((row) => ({
     month: row.month,
@@ -174,7 +174,7 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
       FROM orders 
       WHERE paid_at IS NOT NULL AND created_at BETWEEN $1 AND $2  
       `,
-    [currentMonthStart, currentMonthEnd]
+    [currentMonthStart, currentMonthEnd],
   );
 
   const currentMonthSales =
@@ -185,7 +185,7 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
         SELECT name, stock FROM products WHERE stock <= 5 
       `);
 
-      //if we want all data the . else rows[0] method
+  //if we want all data the . else rows[0] method
   const lowStockProducts = lowStockProductsQuery.rows;
 
   // Revenue Growth Rate (%)
@@ -195,7 +195,7 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
       FROM orders
       WHERE paid_at IS NOT NULL AND created_at BETWEEN $1 AND $2
     `,
-    [previousMonthStart, previousMonthEnd]
+    [previousMonthStart, previousMonthEnd],
   );
 
   const lastMonthRevenue = parseFloat(lastMonthRevenueQuery.rows[0].total) || 0;
@@ -213,7 +213,7 @@ export const dashboardStats = catchAsyncErrors(async (req, res, next) => {
     `
     SELECT COUNT(*) FROM users WHERE created_at >= $1 AND role = 'User'
   `,
-    [currentMonthStart]
+    [currentMonthStart],
   );
 
   const newUsersThisMonth = parseInt(newUsersThisMonthQuery.rows[0].count) || 0;

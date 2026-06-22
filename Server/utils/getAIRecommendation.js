@@ -1,15 +1,15 @@
 export async function getAIRecommendation(userPrompt, products) {
   const API_KEY = process.env.api_key;
   const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
-  console.log("API Key Exists:", !!process.env.api_key);
-  console.log("API Key Prefix:", process.env.api_key?.slice(0, 15));
-  console.log("Products Count:", products.length);
+  // console.log("API Key Exists:", !!process.env.api_key);
+  // console.log("API Key Prefix:", process.env.api_key?.slice(0, 15));
+  // console.log("Products Count:", products.length);
 
   try {
     const geminiPrompt = `
         Here is a list of available products:
         ${JSON.stringify(products, null, 2)}
-
+    
         Based on the following user request, filter and suggest the best matching products:
         "${userPrompt}"
 
@@ -26,6 +26,7 @@ export async function getAIRecommendation(userPrompt, products) {
 
     const data = await response.json();
 
+    // console.log("Gemini API Response:", data);
     if (data?.error) {
       console.log("Gemini API error:", data.error);
       return { success: false, products: [], message: data.error.message };

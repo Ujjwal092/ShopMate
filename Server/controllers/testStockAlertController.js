@@ -1,5 +1,8 @@
 import database from "../database/db.js";
-import { getPendingStockAlertsForProduct, markStockAlertsNotified } from "../models/stockAlertModel.js";
+import {
+  getPendingStockAlertsForProduct,
+  markStockAlertsNotified,
+} from "../models/stockAlertModel.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { generateStockAlertEmailTemplate } from "../utils/generateStockAlertEmailTemplate.js";
 
@@ -15,18 +18,18 @@ export const testStockAlert = async (req, res) => {
       });
     }
 
-    console.log("\n🧪 TESTING STOCK ALERT SYSTEM");
-    console.log("================================");
-    console.log(`Product ID: ${productId}`);
-    console.log(`Product Name: ${productName}`);
+    // console.log("\n🧪 TESTING STOCK ALERT SYSTEM");
+    // console.log("================================");
+    // console.log(`Product ID: ${productId}`);
+    // console.log(`Product Name: ${productName}`);
 
     // Step 1: Get pending alerts
-    console.log("\n📊 Step 1: Fetching pending alerts...");
+    // console.log("\n Step 1: Fetching pending alerts...");
     const alertResult = await getPendingStockAlertsForProduct(productId);
     const alerts = alertResult.rows;
     console.log(`Found ${alerts.length} subscribers`);
     if (alerts.length === 0) {
-      console.log("⚠️ No subscribers found!");
+      console.log(" No subscribers found!");
       return res.status(200).json({
         success: true,
         message: "No subscribers for this product",
@@ -39,7 +42,7 @@ export const testStockAlert = async (req, res) => {
     });
 
     // Step 2: Get product details
-    console.log("\n📦 Step 2: Fetching product details...");
+    console.log("\n Step 2: Fetching product details...");
     const productResult = await database.query(
       `SELECT images, price FROM products WHERE id = $1`,
       [productId],
@@ -59,7 +62,7 @@ export const testStockAlert = async (req, res) => {
     console.log(`Image: ${productImage ? "Available" : "Not Available"}`);
 
     // Step 3: Send emails
-    console.log("\n📧 Step 3: Sending emails...");
+    console.log("\n Step 3: Sending emails...");
     let sentCount = 0;
     let failedCount = 0;
 
@@ -86,7 +89,7 @@ export const testStockAlert = async (req, res) => {
     }
 
     // Step 4: Mark as notified
-    console.log("\n✔️ Step 4: Marking alerts as notified...");
+    console.log("\n Step 4: Marking alerts as notified...");
     const alertIds = alerts.map((alert) => alert.id);
     await markStockAlertsNotified(alertIds);
     console.log(`Marked ${alertIds.length} alerts as notified`);
