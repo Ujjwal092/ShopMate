@@ -25,106 +25,108 @@ export const placeNewOrder = catchAsyncErrors(async (req, res, next) => {
     !phone
   ) {
     return next(
-      new ErrorHandler("Please provide complete shipping details.", 400)
+      new ErrorHandler("Please provide complete shipping details.", 400),
     );
   }
 
   const items = Array.isArray(orderedItems) //orderedItems is array or not
     ? orderedItems //if yes
     : JSON.parse(orderedItems); //if no  and from frontend stringify ke form m aayega
-    //parse is done for map method use
-  
-    //if no item placed
+  //parse is done for map method use
+
+  //if no item placed
   if (!items || items.length === 0) {
     return next(new ErrorHandler("No items in cart.", 400));
   }
 
   const productIds = items.map((item) => item.product.id); //get product ids from item
-   
+
   const { rows: products } = await database.query(
     `SELECT id, price, stock, name FROM products WHERE id = ANY($1::uuid[])`,
-    [productIds]
+    [productIds],
   );
 
   let total_price = 0;
   const values = [];
   const placeholders = [];
 
+  //for each item in cart check if product is available or not and if available then check stock and calculate total price
   items.forEach((item, index) => {
     const product = products.find((p) => p.id === item.product.id);
 
     if (!product) {
       return next(
-        new ErrorHandler(`Product not found for ID: ${item.product.id}`, 404)
+        new ErrorHandler(`Product not found for ID: ${item.product.id}`, 404),
       );
     }
-  //requested item from frontend should be greater than stock for that product then not avialble nai hai
+    //requested item from frontend should be greater than stock for that product then not avialble nai hai
     if (item.quantity > product.stock) {
       return next(
         new ErrorHandler(
           `Sorry we have only ${product.stock} units available for ${product.name}`,
-          400
-        )
+          400,
+        ),
       );
     }
 
     const itemTotal = product.price * item.quantity; //total cart value
-     total_price += itemTotal; 
-    
-     //in values array push AND IT WILL BE PUSHED TO orderItem model
+    total_price += itemTotal;
+
+    //in values array push AND IT WILL BE PUSHED TO orderItem model
     values.push(
       null, //orderId
       product.id,
       item.quantity,
       product.price,
       item.product.images[0].url || "",
-      product.name
+      product.name,
     );
-  //??
+    //??
     const offset = index * 6;
 
     placeholders.push(
       `($${offset + 1}, $${offset + 2}, $${offset + 3}, $${offset + 4}, 
-      $${offset + 5}, $${offset + 6})`
+      $${offset + 5}, $${offset + 6})`,
     );
   });
 
   const tax_price = 0.18;
   const shipping_price = total_price >= 50 ? 0 : 2; //if shipping price is greater than 50 then 0 shipping price else 2 dollar
   total_price = Math.round(
-    total_price + total_price * tax_price + shipping_price
+    total_price + total_price * tax_price + shipping_price,
   );
 
-  //create order and will store into orderTable db 
+  //create order and will store into orderTable db
   const orderResult = await database.query(
     `INSERT INTO orders (buyer_id, total_price, tax_price, shipping_price) VALUES ($1, $2, $3, $4) RETURNING *`,
-    [req.user.id, total_price, tax_price, shipping_price] //buyer id will be user who is req ka id
+    [req.user.id, total_price, tax_price, shipping_price], //buyer id will be user who is req ka id
   );
 
-  const orderId = orderResult.rows[0].id; //prev null set kiya tha 
+  const orderId = orderResult.rows[0].id; //prev null set kiya tha
 
   for (let i = 0; i < values.length; i += 6) {
     values[i] = orderId;
   }
- 
+
   //order items
   await database.query(
     `
     INSERT INTO order_items (order_id, product_id, quantity, price, image, title)
     VALUES ${placeholders.join(", ")} RETURNING *
     `,
-    values
+    values,
   );
- 
+
   //shipping info
   await database.query(
     `
     INSERT INTO shipping_info (order_id, full_name, state, city, country, address, pincode, phone)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *
     `,
-    [orderId, full_name, state, city, country, address, pincode, phone]
+    [orderId, full_name, state, city, country, address, pincode, phone],
   );
 
+  //generate payment intent using stripe and return client secret to frontend for payment
   const paymentResponse = await generatePaymentIntent(orderId, total_price);
 
   if (!paymentResponse.success) {
@@ -171,7 +173,7 @@ LEFT JOIN shipping_info s ON o.id = s.order_id
 WHERE o.id = $1
 GROUP BY o.id, s.id;
 `,
-    [orderId]
+    [orderId],
   );
 
   res.status(200).json({
@@ -212,7 +214,7 @@ json_build_object(
 WHERE o.buyer_id = $1 AND o.paid_at IS NOT NULL
 GROUP BY o.id, s.id
         `,
-    [req.user.id]
+    [req.user.id],
   );
 
   res.status(200).json({
@@ -258,10 +260,10 @@ GROUP BY o.id, s.id
   });
 });
 
+//for admin to update order status
 export const updateOrderStatus = catchAsyncErrors(async (req, res, next) => {
- 
   const { status } = req.body;
-  
+
   if (!status) {
     return next(new ErrorHandler("Provide a valid status for order.", 400));
   }
@@ -270,7 +272,7 @@ export const updateOrderStatus = catchAsyncErrors(async (req, res, next) => {
     `
     SELECT * FROM orders WHERE id = $1
     `,
-    [orderId]
+    [orderId],
   );
 
   if (results.rows.length === 0) {
@@ -281,7 +283,7 @@ export const updateOrderStatus = catchAsyncErrors(async (req, res, next) => {
     `
     UPDATE orders SET order_status = $1 WHERE id = $2 RETURNING *
     `,
-    [status, orderId]
+    [status, orderId],
   );
 
   res.status(200).json({
@@ -293,10 +295,9 @@ export const updateOrderStatus = catchAsyncErrors(async (req, res, next) => {
 
 export const cancelOrder = catchAsyncErrors(async (req, res, next) => {
   const { orderId } = req.params;
-  const result = await database.query(
-    `SELECT * FROM orders WHERE id = $1`,
-    [orderId],
-  );
+  const result = await database.query(`SELECT * FROM orders WHERE id = $1`, [
+    orderId,
+  ]);
 
   if (result.rows.length === 0) {
     return next(new ErrorHandler("Order not found.", 404));
@@ -305,7 +306,9 @@ export const cancelOrder = catchAsyncErrors(async (req, res, next) => {
   const order = result.rows[0];
 
   if (order.buyer_id !== req.user.id) {
-    return next(new ErrorHandler("You are not authorized to cancel this order.", 403));
+    return next(
+      new ErrorHandler("You are not authorized to cancel this order.", 403),
+    );
   }
 
   if (order.order_status === "Cancelled") {
@@ -321,12 +324,11 @@ export const cancelOrder = catchAsyncErrors(async (req, res, next) => {
     );
   }
 
+  //if time elapsed is greater than 15 min then order cannot be cancelled
   const createdAt = new Date(order.created_at);
   const elapsed = Date.now() - createdAt.getTime();
   if (elapsed > 15 * 60 * 1000) {
-    return next(
-      new ErrorHandler("The cancellation window has expired.", 400),
-    );
+    return next(new ErrorHandler("The cancellation window has expired.", 400));
   }
 
   const updatedOrder = await database.query(
@@ -347,7 +349,7 @@ export const deleteOrder = catchAsyncErrors(async (req, res, next) => {
     `
         DELETE FROM orders WHERE id = $1 RETURNING *
         `,
-    [orderId]
+    [orderId],
   );
   if (results.rows.length === 0) {
     return next(new ErrorHandler("Invalid order ID.", 404));

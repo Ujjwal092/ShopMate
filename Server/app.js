@@ -58,6 +58,7 @@ app.post(
           `UPDATE payments SET payment_status = $1 WHERE payment_intent_id = $2 RETURNING *`,
           [updatedPaymentStatus, paymentIntent_client_secret],
         );
+        // Update paid_at in orders table for  that order_id
         await database.query(
           `UPDATE orders SET paid_at = NOW() WHERE id = $1 RETURNING *`,
           [paymentTableUpdateResult.rows[0].order_id],
