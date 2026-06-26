@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const popupSlice = createSlice({
   name: "popup",
   initialState: {
-    isAuthPopupOpen: false, //initially the auth popup is closed and it is a funn
+    isAuthPopupOpen: false, //right wla sidebar and if true hoga toh by default open rhgega
     isSidebarOpen: false,
     isSearchBarOpen: false,
     isCartOpen: false,

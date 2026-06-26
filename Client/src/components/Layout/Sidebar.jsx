@@ -23,10 +23,11 @@ const Sidebar = () => {
     { name: "FAQ", icon: HelpCircle, path: "/faq" },
     { name: "Contact", icon: Phone, path: "/contact" },
     { name: "Cart", icon: ShoppingCart, path: "/cart" },
+    // Conditionally render "My Orders" menu item only if authUser exists and orders will be of that user only
     authUser && { name: "My Orders", icon: List, path: "/orders" },
   ];
 
-  const { isSidebarOpen } = useSelector((state) => state.popup);// Access isSidebarOpen from Redux state from popupSlice
+  const { isSidebarOpen } = useSelector((state) => state.popup); // Access isSidebarOpen from Redux state from popupSlice
   if (!isSidebarOpen) return null;
 
   return (

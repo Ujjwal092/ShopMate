@@ -38,11 +38,11 @@ import { fetchWishlistIds } from "./store/slices/wishlistSlice";
 
 const App = () => {
   const { authUser, isCheckingAuth } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); //to use dispatch function to dispatch actions to the Redux store hamne yha laya h
 
   useEffect(() => {
-    dispatch(getUser());
-  }, [dispatch]);
+    dispatch(getUser()); //getUser is is action went to store and store will ask authSlice to get the user data from the backend and update the state in the store
+  }, [dispatch]); //and here dependency array me dispatch h so that it will run only once when the component is mounted and not on every render
 
   useEffect(() => {
     dispatch(
@@ -74,6 +74,7 @@ const App = () => {
   return (
     <>
       <ThemeProvider>
+        {/*we need browser router because it allows seamless navigation on client side without full page reload  */}
         <BrowserRouter>
           <div className="min-h-screen bg-background">
             {/* All components that need to be rendered in the app and 

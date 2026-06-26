@@ -1,4 +1,12 @@
-import { Menu, User, ShoppingCart, Sun, Moon, Search, Heart } from "lucide-react";
+import {
+  Menu,
+  User,
+  ShoppingCart,
+  Sun,
+  Moon,
+  Search,
+  Heart,
+} from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -15,6 +23,7 @@ const Navbar = () => {
   const { cart } = useSelector((state) => state.cart); // Get cart items from Redux store
   const { wishlistIds } = useSelector((state) => state.wishlist);
 
+  //if cart exists, calculate the total quantity of items in the cart, otherwise set count to 0
   const cartItemsCount = cart
     ? cart.reduce((total, item) => total + item.quantity, 0)
     : 0;
@@ -25,7 +34,9 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* LEFT - HAMBURGER MENU button */}
           <button
-            onClick={() => dispatch(toggleSidebar())} //on click of hamburger menu toggle sidebar visibility
+            //onClick pr handler fn call kr skte the upar and wo fn dispatch krta isko but hmne yha duirectly dispatch krdiya hai and working fine
+            onClick={() => dispatch(toggleSidebar())}
+            //on click of hamburger menu toggle sidebar visibility
             className="p-2 rounded-lg hover:bg-secondary/50 transition-all duration-300 hover:scale-110"
             title="Open Menu"
           >
@@ -52,7 +63,8 @@ const Navbar = () => {
               className="p-2 rounded-lg hover:bg-secondary/50 transition-all duration-300 hover:scale-110"
               title="Toggle Theme"
             >
-              {theme === "dark" ? ( //if current theme is dark show sun icon to indicate that clicking it will switch to light mode
+              {theme === "dark" ? (
+                //if current theme is dark show sun icon to indicate that clicking it will switch to light mode
                 <Sun className="w-5 h-5 text-foreground" />
               ) : (
                 <Moon className="w-5 h-5 text-foreground" />
@@ -77,7 +89,10 @@ const Navbar = () => {
               <User className="w-5 h-5 text-foreground" />
             </button>
 
-            {/* WISHLIST + CART */}
+            {/* WISHLIST
+             Link component internally click event handle karta hai. 
+             so no need of button click event handler to toggle wishlist popup.
+             */}
             <Link
               to="/wishlist"
               title="Wishlist"
@@ -92,6 +107,7 @@ const Navbar = () => {
                 </span>
               )}
             </Link>
+
             {/* CART Button */}
             <button
               onClick={() => dispatch(toggleCart())}

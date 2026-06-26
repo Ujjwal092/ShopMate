@@ -10,7 +10,7 @@ import {
 
 import { sendEmail } from "../utils/sendEmail.js";
 
-import { generateNewsletterEmailTemplate } from "../utils/generateForgotPasswordEmailTemplate.js"; // path apna check kar
+import { generateNewsletterEmailTemplate } from "../utils/generateForgotPasswordEmailTemplate.js";
 
 export const subscribeNewsletter = catchAsyncErrors(async (req, res, next) => {
   const { email } = req.body;
