@@ -17,7 +17,7 @@ const LoginModal = () => {
 
   const { authUser, isSigningUp, isLoggingIn, isRequestingForToken } =
     useSelector((state) => state.auth);
-    
+
   const { isAuthPopupOpen } = useSelector((state) => state.popup);
 
   const [mode, setMode] = useState("signin"); // signin | signup | forgot | reset is mode
@@ -30,19 +30,19 @@ const LoginModal = () => {
 
   // Open reset mode if URL indicates
   useEffect(() => {
-  if (location.pathname.startsWith("/password/reset/")) 
-    // Returns true if the sequence of elements of searchString converted to a 
+    if (
+      location.pathname.startsWith("/password/reset/")
+    ) // Returns true if the sequence of elements of searchString converted to a
     //String is the same as the corresponding elements of this object (converted to a String) starting at position. Otherwise returns false.
-     {
-    const timer = setTimeout(() => {
-      setMode("reset"); // Switch to reset mode if URL indicates
-      dispatch(toggleAuthPopup()); // Open the modal of reset password
-    }, 0);
+    {
+      const timer = setTimeout(() => {
+        setMode("reset"); // Switch to reset mode if URL indicates
+        dispatch(toggleAuthPopup()); // Open the modal of reset password
+      }, 0);
 
-    return () => clearTimeout(timer); // Cleanup timeout on unmount
-  }
-}, [location.pathname, dispatch]); // This effect runs on component mount and whenever the URL path changes. If the path indicates a password reset, it opens the modal in reset mode.
-
+      return () => clearTimeout(timer); // Cleanup timeout on unmount
+    }
+  }, [location.pathname, dispatch]); // This effect runs on component mount and whenever the URL path changes. If the path indicates a password reset, it opens the modal in reset mode.
 
   const handleInputChange = (field) => (e) => {
     setFormData({ ...formData, [field]: e.target.value });
@@ -68,7 +68,7 @@ const LoginModal = () => {
           token,
           password: formData.password,
           confirmPassword: formData.confirmPassword,
-        })
+        }),
       );
       return;
     }
@@ -98,12 +98,18 @@ const LoginModal = () => {
   const getIcon = (field) => {
     switch (field) {
       case "email":
-        return <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />;
+        return (
+          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+        );
       case "password":
       case "confirmPassword":
-        return <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />;
+        return (
+          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+        );
       case "name":
-        return <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />;
+        return (
+          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+        );
       default:
         return null;
     }
@@ -115,17 +121,16 @@ const LoginModal = () => {
       <div className="absolute inset-0 backdrop-blur-md bg-[hsla(var(--glass-bg))]" />
 
       <div className="relative z-10 glass-panel w-full max-w-md mx-4 animate-fade-in-up p-6">
-       
         {/* HEADER of modal */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-primary">
             {mode === "reset"
               ? "Reset Password"
               : mode === "signup"
-              ? "Create Account"
-              : mode === "forgot"
-              ? "Forgot Password"
-              : "Welcome Back"}
+                ? "Create Account"
+                : mode === "forgot"
+                  ? "Forgot Password"
+                  : "Welcome Back"}
           </h2>
           <button
             onClick={() => dispatch(toggleAuthPopup())}
@@ -150,7 +155,7 @@ const LoginModal = () => {
               />
             </div>
           )}
-
+          {/* email always vissible except in reset mode */}
           {mode !== "reset" && (
             <div className="relative">
               {getIcon("email")}
@@ -164,7 +169,7 @@ const LoginModal = () => {
               />
             </div>
           )}
-
+          {/* password always visible except in forgot mode, */}
           {mode !== "forgot" && (
             <div className="relative">
               {getIcon("password")}
@@ -178,7 +183,7 @@ const LoginModal = () => {
               />
             </div>
           )}
-
+          {/* confirm password only visible in reset mode. */}
           {mode === "reset" && (
             <div className="relative">
               {getIcon("confirmPassword")}
@@ -210,7 +215,9 @@ const LoginModal = () => {
             type="submit"
             disabled={isLoading}
             className={`w-full py-3 gradient-primary flex justify-center items-center gap-2 text-primary-foreground rounded-lg font-semibold animate-smooth ${
-              isLoading ? "opacity-70 cursor-not-allowed" : "hover:glow-on-hover"
+              isLoading
+                ? "opacity-70 cursor-not-allowed"
+                : "hover:glow-on-hover"
             }`}
           >
             {isLoading ? (
@@ -220,19 +227,21 @@ const LoginModal = () => {
                   {mode === "reset"
                     ? "Resetting password..."
                     : mode === "signup"
-                    ? "Signing up..."
-                    : mode === "forgot"
-                    ? "Requesting email..."
-                    : "Signing in..."}
+                      ? "Signing up..."
+                      : mode === "forgot"
+                        ? "Requesting email..."
+                        : "Signing in..."}
                 </span>
               </>
-            ) : mode === "reset"
-            ? "Reset Password"
-            : mode === "signup"
-            ? "Create Account"
-            : mode === "forgot"
-            ? "Send Reset Email"
-            : "Sign In"}
+            ) : mode === "reset" ? (
+              "Reset Password"
+            ) : mode === "signup" ? (
+              "Create Account"
+            ) : mode === "forgot" ? (
+              "Send Reset Email"
+            ) : (
+              "Sign In"
+            )}
           </button>
         </form>
 

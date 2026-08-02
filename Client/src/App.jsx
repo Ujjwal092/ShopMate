@@ -37,6 +37,7 @@ import { fetchAllProducts } from "./store/slices/productSlice";
 import { fetchWishlistIds } from "./store/slices/wishlistSlice";
 
 const App = () => {
+  //after each refresh we need to check if the user is logged in or not so we will use useEffect hook to dispatch getUser action and get the user data from the backend and update the state in the store warna refresh hone ke baad phr se login krna parega
   const { authUser, isCheckingAuth } = useSelector((state) => state.auth);
   const dispatch = useDispatch(); //to use dispatch function to dispatch actions to the Redux store hamne yha laya h
 

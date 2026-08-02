@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toggleSearchBar } from "../../store/slices/popupSlice";
 
 const SearchOverlay = () => {
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [searchQuery, setSearchQuery] = useState("");
   const dispatch = useDispatch(); // For toggling search bar visibility
   const navigate = useNavigate(); // For navigating to products page with search query
   const { isSearchBarOpen } = useSelector((state) => state.popup); // Get search bar visibility state from Redux
@@ -19,7 +19,7 @@ const SearchOverlay = () => {
       navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
     }
   };
-  
+  //encodeURI sttring krega means aagr monitor search kr rhe toh /products?search=monitor krega and agar monitor+keyboard search kr rhe toh /products?search=monitor%2Bkeyboard krega (http://localhost:5173/products?search=monitor%2Bkeyboard) is type se
 
   return (
     <>
@@ -27,10 +27,9 @@ const SearchOverlay = () => {
         {/* GLASS BACKGROUND */}
         <div className="absolute inset-0 backdrop-blur-md bg-[hsla(var(--glass-bg))]">
           {/* SEARCH CONTAINER */}
-          <div className="relative z-10 animate-slide-in-top"> 
+          <div className="relative z-10 animate-slide-in-top">
             {/* animate-slide-in-top make sure that the seach container slides in from the top */}
             <div className="glass-panel m-6 max-w-2xl mx-auto">
-
               {/* HEADER AND CLOSE BUTTON */}
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-primary">
@@ -44,7 +43,7 @@ const SearchOverlay = () => {
                 </button>
               </div>
 
-                {/* SEARCH ICON BUTTON and Place hiolder*/}
+              {/* SEARCH ICON BUTTON and Place hiolder*/}
               <div className="relative">
                 <button
                   onClick={handleSearch} //ONCLICK of search icon trigger search
@@ -67,7 +66,6 @@ const SearchOverlay = () => {
               <div className="mt-6 text-center ">
                 <p>Start typing to search for products...</p>
               </div>
-              
             </div>
           </div>
         </div>
