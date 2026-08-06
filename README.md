@@ -45,10 +45,26 @@ ShopMate is a full-stack web application designed for online commerce, digital s
 ## Home-Page(with chatbot)
 <img width="1876" height="861" alt="Screenshot 2026-08-07 021509" src="https://github.com/user-attachments/assets/1ab1a160-994c-4895-89bc-bea000dda29d" />
 
+## Recently - Visited Products
+<img width="1884" height="826" alt="Screenshot 2026-08-07 021756" src="https://github.com/user-attachments/assets/b30ab2ed-8b73-47f2-88c1-25a398e0f7fe" />
 
-![sorryProd](https://raw.githubusercontent.com/Ujjwal092/ShopMate/main/Client/src/assets/sorryProd.png)
+## Testimonials & Stay-In-Loop
+<img width="1869" height="849" alt="Screenshot 2026-08-07 022036" src="https://github.com/user-attachments/assets/8594525e-919a-4469-b13d-cf1c60548d43" />
 
-![laptop](https://raw.githubusercontent.com/Ujjwal092/ShopMate/main/dashboard/src/assets/laptop.webp)
+## Products page
+<img width="1892" height="857" alt="Screenshot 2026-08-07 022144" src="https://github.com/user-attachments/assets/adeb07a9-df82-4933-bdc7-0cec4c3cdc86" />
+
+## AI - Search
+<img width="1262" height="741" alt="Screenshot 2026-08-07 022155" src="https://github.com/user-attachments/assets/1c6a083f-27ab-4ce1-be4f-3a64aea9e6e1" />
+
+## SideBar with Profile pannel
+<img width="1886" height="864" alt="Screenshot 2026-08-07 022321" src="https://github.com/user-attachments/assets/97c00d33-4138-41ae-b7ea-c515ce6295d9" />
+
+## My Order
+<img width="1543" height="710" alt="Screenshot 2026-08-07 022521" src="https://github.com/user-attachments/assets/bbbdca65-b868-42af-8c09-4621706cb5e1" />
+
+## Payment 
+<img width="1639" height="757" alt="Screenshot 2026-08-07 022706" src="https://github.com/user-attachments/assets/980d3097-9222-4484-b2d2-268eb2b55b60" />
 
 ## Admin-Panel
 <img width="1874" height="844" alt="Screenshot 2026-08-07 021110" src="https://github.com/user-attachments/assets/6c69ac41-f1db-4377-b6d5-9cd5128150ae" />
