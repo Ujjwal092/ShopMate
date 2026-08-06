@@ -48,10 +48,7 @@ const Navbar = () => {
             to="/"
             className="text-2xl  font-bold bg-clip-text text-transparent  bg-gradient-to-r from-purple-500 to-blue-500 hover:scale-105 transition-transform duration-300"
           >
-            <img
-              src="../src/assets/Cart.gif"
-              className="w-8 h-8 mr-2 inline-block"
-            />
+            <img src="/Cart.gif" className="w-8 h-8 mr-2 inline-block" />
             CartSyy
           </Link>
 
