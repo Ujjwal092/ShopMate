@@ -3,7 +3,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./toast.css";
-import Chatbot from "../src/components/Layout/Chatbot";
+import Chatbot from "./components/Layout/Chatbot";
 
 // Layout Components
 import Navbar from "./components/Layout/Navbar";
