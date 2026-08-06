@@ -72,6 +72,8 @@ ShopMate is a full-stack web application designed for online commerce, digital s
 ## Product - Management
 <img width="1883" height="870" alt="Screenshot 2026-08-07 021339" src="https://github.com/user-attachments/assets/6665a716-9749-46b2-8e07-1aea68436a2c" />
 
+## Swagger
+<img width="1870" height="838" alt="Screenshot 2026-06-14 181337" src="https://github.com/user-attachments/assets/24cbd96a-0f10-416f-b504-6e8c99e87c35" />
 
 ## 🛠️ Tech Stack
 
