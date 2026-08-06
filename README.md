@@ -42,13 +42,19 @@ ShopMate is a full-stack web application designed for online commerce, digital s
 
 ## 📸 Screenshots
 
-![place holder](https://raw.githubusercontent.com/Ujjwal092/ShopMate/main/Client/src/assets/place-holder.jpg)
+## Home-Page(with chatbot)
+<img width="1876" height="861" alt="Screenshot 2026-08-07 021509" src="https://github.com/user-attachments/assets/1ab1a160-994c-4895-89bc-bea000dda29d" />
+
 
 ![sorryProd](https://raw.githubusercontent.com/Ujjwal092/ShopMate/main/Client/src/assets/sorryProd.png)
 
 ![laptop](https://raw.githubusercontent.com/Ujjwal092/ShopMate/main/dashboard/src/assets/laptop.webp)
 
+## Admin-Panel
 <img width="1874" height="844" alt="Screenshot 2026-08-07 021110" src="https://github.com/user-attachments/assets/6c69ac41-f1db-4377-b6d5-9cd5128150ae" />
+
+## Product - Management
+<img width="1883" height="870" alt="Screenshot 2026-08-07 021339" src="https://github.com/user-attachments/assets/6665a716-9749-46b2-8e07-1aea68436a2c" />
 
 
 ## 🛠️ Tech Stack
