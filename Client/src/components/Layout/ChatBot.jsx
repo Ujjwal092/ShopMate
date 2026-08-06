@@ -25,11 +25,14 @@ const Chatbot = () => {
     setThinking(true);
 
     try {
-      const res = await fetch("http://localhost:4000/api/v1/product/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMessage }),
-      });
+      const res = await fetch(
+        "https://cartsyy.onrender.com/api/v1/product/chat",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: userMessage }),
+        },
+      );
 
       const data = await res.json();
 
