@@ -127,7 +127,7 @@ const ProductSlider = ({ title, products }) => {
                   {/* PRODUCT PRICE */}
                   <div className="flex items-center space-x-2">
                     <span className="text-xl font-bold text-primary">
-                                          {formatINR(product.price)}
+                      {formatINR(product.price)}
                     </span>
                   </div>
 

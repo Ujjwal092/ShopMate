@@ -46,7 +46,7 @@ export const notifyStockAlertSubscribers = async (productId, productName) => {
   try {
     const alertResult = await getPendingStockAlertsForProduct(productId);
     const alerts = alertResult.rows;
-    
+
     if (alerts.length === 0) {
       console.log(`ℹ️ No pending stock alerts for product: ${productName}`);
       return;

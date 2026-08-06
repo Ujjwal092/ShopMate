@@ -17,7 +17,7 @@ const Contact = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await axiosInstance.post('/contact/send', {
+      const { data } = await axiosInstance.post("/contact/send", {
         name: formData.name,
         email: formData.email,
         subject: formData.subject,
@@ -27,17 +27,21 @@ const Contact = () => {
       // If user opted to subscribe, call newsletter endpoint
       if (subscribe && formData.email) {
         try {
-          await axiosInstance.post('/newsletter/subscribe', { email: formData.email });
+          await axiosInstance.post("/newsletter/subscribe", {
+            email: formData.email,
+          });
         } catch {
           // ignore newsletter errors
         }
       }
 
-      toast.success(data.message || 'Message sent successfully');
-      setFormData({ name: '', email: '', subject: '', message: '' });
+      toast.success(data.message || "Message sent successfully");
+      setFormData({ name: "", email: "", subject: "", message: "" });
       setSubscribe(false);
     } catch (err) {
-      toast.error(err.response?.data?.message || err.message || 'Failed to send message');
+      toast.error(
+        err.response?.data?.message || err.message || "Failed to send message",
+      );
     } finally {
       setLoading(false);
     }
@@ -149,7 +153,12 @@ const Contact = () => {
                   onChange={(e) => setSubscribe(e.target.checked)}
                   className="w-4 h-4 rounded"
                 />
-                <label htmlFor="subscribe" className="text-sm text-muted-foreground">Stay in the loop — subscribe to our newsletter</label>
+                <label
+                  htmlFor="subscribe"
+                  className="text-sm text-muted-foreground"
+                >
+                  Stay in the loop — subscribe to our newsletter
+                </label>
               </div>
 
               <button
@@ -158,7 +167,7 @@ const Contact = () => {
                 className="w-full flex items-center justify-center space-x-2 p-3 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover font-semibold transition-all disabled:opacity-50"
               >
                 <Send className="w-5 h-5" />
-                <span>{loading ? 'Sending...' : 'Send Message'}</span>
+                <span>{loading ? "Sending..." : "Send Message"}</span>
               </button>
             </form>
           </div>

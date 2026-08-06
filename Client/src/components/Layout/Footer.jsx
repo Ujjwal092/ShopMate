@@ -20,15 +20,20 @@ const Footer = () => {
 
   const handleFooterSubscribe = async (e) => {
     e.preventDefault();
-    if (!footerEmail) { toast.error('Please enter a valid email.'); return; }
+    if (!footerEmail) {
+      toast.error("Please enter a valid email.");
+      return;
+    }
     setFooterLoading(true);
     try {
-      await axiosInstance.post('/newsletter/subscribe', { email: footerEmail });
-      toast.success('Subscribed successfully');
-      setFooterEmail('');
+      await axiosInstance.post("/newsletter/subscribe", { email: footerEmail });
+      toast.success("Subscribed successfully");
+      setFooterEmail("");
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Subscription failed');
-    } finally { setFooterLoading(false); }
+      toast.error(err.response?.data?.message || "Subscription failed");
+    } finally {
+      setFooterLoading(false);
+    }
   };
 
   const footerLinks = {
@@ -53,19 +58,46 @@ const Footer = () => {
   };
 
   const socialLinks = [
-    { icon: Facebook, href: "#", label: "Facebook", className: "bg-blue-600 hover:bg-blue-700" },
-    { icon: Twitter, href: "#", label: "Twitter", className: "bg-blue-400 hover:bg-blue-500" },
-    { icon: Instagram, href: "#", label: "Instagram", className: "bg-pink-500 hover:bg-pink-600" },
-    { icon: Youtube, href: "#", label: "YouTube", className: "bg-red-600 hover:bg-red-700" },
+    {
+      icon: Facebook,
+      href: "#",
+      label: "Facebook",
+      className: "bg-blue-600 hover:bg-blue-700",
+    },
+    {
+      icon: Twitter,
+      href: "#",
+      label: "Twitter",
+      className: "bg-blue-400 hover:bg-blue-500",
+    },
+    {
+      icon: Instagram,
+      href: "#",
+      label: "Instagram",
+      className: "bg-pink-500 hover:bg-pink-600",
+    },
+    {
+      icon: Youtube,
+      href: "#",
+      label: "YouTube",
+      className: "bg-red-600 hover:bg-red-700",
+    },
   ];
 
-  const bgClass = theme === "dark" ? "bg-background/80 backdrop-blur-md" : "bg-white/95 backdrop-blur-sm shadow-inner";
+  const bgClass =
+    theme === "dark"
+      ? "bg-background/80 backdrop-blur-md"
+      : "bg-white/95 backdrop-blur-sm shadow-inner";
   const textClass = theme === "dark" ? "text-foreground" : "text-gray-900";
-  const mutedClass = theme === "dark" ? "text-muted-foreground" : "text-gray-600";
-  const borderClass = theme === "dark" ? "border-[hsla(var(--glass-border))]" : "border-gray-200";
+  const mutedClass =
+    theme === "dark" ? "text-muted-foreground" : "text-gray-600";
+  const borderClass =
+    theme === "dark" ? "border-[hsla(var(--glass-border))]" : "border-gray-200";
 
   return (
-    <footer className={`${bgClass} border-t ${borderClass} mt-16 transition-colors duration-300`}>
+    <footer
+      className={`${bgClass} border-t ${borderClass} mt-16 transition-colors duration-300`}
+    >
       <div className="container mx-auto px-4 py-16">
         {/* Top Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12 ml-[4rem]">
@@ -75,7 +107,8 @@ const Footer = () => {
               CartSyy
             </h2>
             <p className={`${mutedClass} text-sm`}>
-              Your trusted partner for online shopping. Discover amazing products with exceptional quality and service.
+              Your trusted partner for online shopping. Discover amazing
+              products with exceptional quality and service.
             </p>
             <div className="space-y-2 text-sm">
               <div className="flex items-center space-x-2">
@@ -96,7 +129,9 @@ const Footer = () => {
           {/* Company Links */}
           {["company", "customer", "legal"].map((section) => (
             <div key={section}>
-              <h3 className={`text-lg font-semibold ${textClass} mb-4 capitalize`}>
+              <h3
+                className={`text-lg font-semibold ${textClass} mb-4 capitalize`}
+              >
                 {section.replace("-", " ")}
               </h3>
               <ul className="space-y-2">
@@ -118,12 +153,17 @@ const Footer = () => {
         {/* Newsletter */}
         <div className="bg-secondary rounded-2xl p-8 mb-12 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left mb-4 sm:mb-0">
-            <h3 className={`text-xl font-semibold ${textClass} mb-2`}>Stay Connected</h3>
+            <h3 className={`text-xl font-semibold ${textClass} mb-2`}>
+              Stay Connected
+            </h3>
             <p className={`${mutedClass} text-sm`}>
-              Subscribe to our newsletter for exclusive offers and updates  💜
+              Subscribe to our newsletter for exclusive offers and updates 💜
             </p>
           </div>
-          <form onSubmit={handleFooterSubscribe} className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <form
+            onSubmit={handleFooterSubscribe}
+            className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto"
+          >
             <input
               type="email"
               placeholder="Enter your email"
@@ -137,13 +177,15 @@ const Footer = () => {
               disabled={footerLoading}
               className="px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:scale-105 transition-transform duration-300 font-semibold shadow-lg disabled:opacity-50"
             >
-              {footerLoading ? 'Subscribing...' : 'Subscribe'}
+              {footerLoading ? "Subscribing..." : "Subscribe"}
             </button>
           </form>
         </div>
 
         {/* Social & Copyright */}
-        <div className={`flex flex-col md:flex-row items-center justify-between pt-8 border-t ${borderClass}`}>
+        <div
+          className={`flex flex-col md:flex-row items-center justify-between pt-8 border-t ${borderClass}`}
+        >
           <div className="flex items-center space-x-4 mb-4 md:mb-0">
             {socialLinks.map((social) => (
               <a

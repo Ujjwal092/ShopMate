@@ -9,15 +9,20 @@ const NewsletterSection = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email) { toast.error("Please enter a valid email."); return; }
+    if (!email) {
+      toast.error("Please enter a valid email.");
+      return;
+    }
     setLoading(true);
     try {
-      await axiosInstance.post('/newsletter/subscribe', { email });
-      toast.success('Subscribed successfully');
-      setEmail('');
+      await axiosInstance.post("/newsletter/subscribe", { email });
+      toast.success("Subscribed successfully");
+      setEmail("");
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Subscription failed');
-    } finally { setLoading(false); }
+      toast.error(err.response?.data?.message || "Subscription failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,7 +41,10 @@ const NewsletterSection = () => {
             deals, new arrivals, and special offers.
           </p>
 
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
+          >
             <div className="relative flex-1">
               <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <input
@@ -50,12 +58,12 @@ const NewsletterSection = () => {
             </div>
             <button
               type="submit"
-                          disabled={loading}
-                          className="px-8 py-4 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-semibold flex items-center justify-center space-x-2 disabled:opacity-50"
-                        >
-                          <Send className="w-5 h-5" />
-                          <span>{loading ? 'Subscribing...' : 'Subscribe'}</span>
-                        </button>
+              disabled={loading}
+              className="px-8 py-4 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-semibold flex items-center justify-center space-x-2 disabled:opacity-50"
+            >
+              <Send className="w-5 h-5" />
+              <span>{loading ? "Subscribing..." : "Subscribe"}</span>
+            </button>
           </form>
 
           <p className="text-sm text-muted-foreground mt-4">

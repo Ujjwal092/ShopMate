@@ -22,10 +22,10 @@ const ProductCard = ({ product }) => {
       >
         {/* PRODUCT IMAGE */}
         <div className="relative overflow-hidden rounded-lg mb-4">
-        <LazyImage
-          src={product.images?.[0]?.url}
+          <LazyImage
+            src={product.images?.[0]?.url}
             alt={product.name}
-          className="w-full h-48"
+            className="w-full h-48"
           />
 
           {/* BADGES */}
@@ -85,7 +85,7 @@ const ProductCard = ({ product }) => {
           {/* PRODUCT PRICE */}
           <div className="flex items-center space-x-2">
             <span className="text-xl font-bold text-primary">
-                          {formatINR(product.price)}
+              {formatINR(product.price)}
             </span>
           </div>
 
@@ -96,15 +96,15 @@ const ProductCard = ({ product }) => {
                 product.stock > 5
                   ? "bg-green-500/20 text-green-400"
                   : product.stock > 0
-                  ? "bg-yellow-500/20 text-yellow-400"
-                  : "bg-red-500/20 text-red-400"
+                    ? "bg-yellow-500/20 text-yellow-400"
+                    : "bg-red-500/20 text-red-400"
               }`}
             >
               {product.stock > 5
                 ? "In Stock"
                 : product.stock > 0
-                ? "Limited Stock"
-                : "Out of Stock"}
+                  ? "Limited Stock"
+                  : "Out of Stock"}
             </span>
           </div>
         </div>

@@ -17,7 +17,10 @@ const Cart = () => {
     }
   };
 
-  let total = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  let total = cart.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
+    0,
+  );
   let cartItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   if (cart.length === 0) {
@@ -45,10 +48,12 @@ const Cart = () => {
     <div className="min-h-screen pt-20">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Shopping Cart</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Shopping Cart
+          </h1>
           <p className="text-muted-foreground">
             {cartItemsCount} item{cartItemsCount !== 1 ? "s" : ""} in your cart
-          </p> 
+          </p>
           {/** 
                  if two or more -> items
                  else -> item
@@ -59,9 +64,14 @@ const Cart = () => {
           {/* Cart Items */}
           <div className="flex-1 space-y-4">
             {cart.map((item) => (
-              <div key={item.product.id} className="glass-card p-4 flex flex-col md:flex-row items-center md:items-start gap-4">
-                
-                <Link to={`/product/${item.product.id}`} className="flex-shrink-0">
+              <div
+                key={item.product.id}
+                className="glass-card p-4 flex flex-col md:flex-row items-center md:items-start gap-4"
+              >
+                <Link
+                  to={`/product/${item.product.id}`}
+                  className="flex-shrink-0"
+                >
                   <img
                     src={item.product?.images[0]?.url}
                     alt={item.product.name}
@@ -71,25 +81,40 @@ const Cart = () => {
 
                 <div className="flex-1 flex flex-col md:flex-row md:justify-between w-full items-start md:items-center gap-2">
                   <div className="flex-1">
-                    <Link to={`/product/${item.product.id}`} className="block hover:text-primary transition-colors">
-                      <h3 className="text-lg font-semibold text-foreground">{item.product.name}</h3>
+                    <Link
+                      to={`/product/${item.product.id}`}
+                      className="block hover:text-primary transition-colors"
+                    >
+                      <h3 className="text-lg font-semibold text-foreground">
+                        {item.product.name}
+                      </h3>
                     </Link>
-                    <p className="text-muted-foreground text-sm">Category: {item.product.category}</p>
-                    <span className="text-xl font-bold text-primary">{formatINR(item.product.price)}</span>
+                    <p className="text-muted-foreground text-sm">
+                      Category: {item.product.category}
+                    </p>
+                    <span className="text-xl font-bold text-primary">
+                      {formatINR(item.product.price)}
+                    </span>
                   </div>
 
                   <div className="flex items-center gap-4 mt-2 md:mt-0">
                     <div className="flex items-center gap-2">
                       <button
                         disabled={item.quantity === 1}
-                        onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                        onClick={() =>
+                          updateQuantity(item.product.id, item.quantity - 1)
+                        }
                         className="p-2 glass-card hover:glow-on-hover animate-smooth"
                       >
                         <Minus className="w-4 h-4" />
                       </button>
-                      <span className="w-10 text-center font-semibold">{item.quantity}</span>
+                      <span className="w-10 text-center font-semibold">
+                        {item.quantity}
+                      </span>
                       <button
-                        onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                        onClick={() =>
+                          updateQuantity(item.product.id, item.quantity + 1)
+                        }
                         className="p-2 glass-card hover:glow-on-hover animate-smooth"
                       >
                         <Plus className="w-4 h-4" />
@@ -106,7 +131,7 @@ const Cart = () => {
 
                   <div className="text-right mt-2 md:mt-0">
                     <p className="text-lg font-bold text-foreground">
-                                          {formatINR(item.product.price * item.quantity)}
+                      {formatINR(item.product.price * item.quantity)}
                     </p>
                   </div>
                 </div>
@@ -117,17 +142,22 @@ const Cart = () => {
           {/* Order Summary */}
           <div className="lg:w-1/3 flex-shrink-0">
             <div className="glass-panel p-6 sticky top-24 flex flex-col gap-4">
-             
-              <h2 className="text-xl font-semibold text-foreground mb-4">Order Summary</h2>
+              <h2 className="text-xl font-semibold text-foreground mb-4">
+                Order Summary
+              </h2>
 
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Subtotal ({cartItemsCount} items)</span>
+                <span className="text-muted-foreground">
+                  Subtotal ({cartItemsCount} items)
+                </span>
                 <span className="font-semibold">{formatINR(total)}</span>
               </div>
 
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping Fee</span>
-                <span className="font-semibold text-green-500">{total >= 50 ? "Free" : formatINR(2)}</span>
+                <span className="font-semibold text-green-500">
+                  {total >= 50 ? "Free" : formatINR(2)}
+                </span>
               </div>
 
               {total < 50 && (
@@ -161,8 +191,6 @@ const Cart = () => {
               >
                 Continue Shopping
               </Link>
-
-
             </div>
           </div>
         </div>

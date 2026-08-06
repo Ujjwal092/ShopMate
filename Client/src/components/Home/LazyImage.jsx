@@ -5,12 +5,17 @@ const LazyImage = ({ src, alt = "", className = "", style = {} }) => {
   const [loaded, setLoaded] = useState(false);
   const [visible, setVisible] = useState(() => {
     if (typeof window === "undefined") return false;
-    return !('IntersectionObserver' in window);
+    return !("IntersectionObserver" in window);
   });
 
   useEffect(() => {
     let obs;
-    if (!visible && imgRef.current && typeof window !== "undefined" && 'IntersectionObserver' in window) {
+    if (
+      !visible &&
+      imgRef.current &&
+      typeof window !== "undefined" &&
+      "IntersectionObserver" in window
+    ) {
       obs = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
@@ -25,7 +30,11 @@ const LazyImage = ({ src, alt = "", className = "", style = {} }) => {
   }, [visible]);
 
   return (
-    <div ref={imgRef} className={`relative ${className}`} style={{minHeight: '4rem', ...style}}>
+    <div
+      ref={imgRef}
+      className={`relative ${className}`}
+      style={{ minHeight: "4rem", ...style }}
+    >
       {!loaded && (
         <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse" />
       )}
@@ -34,7 +43,7 @@ const LazyImage = ({ src, alt = "", className = "", style = {} }) => {
           src={src}
           alt={alt}
           onLoad={() => setLoaded(true)}
-          className={`${loaded ? 'opacity-100' : 'opacity-0'} w-full h-full object-contain transition-opacity duration-300`}
+          className={`${loaded ? "opacity-100" : "opacity-0"} w-full h-full object-contain transition-opacity duration-300`}
         />
       )}
     </div>

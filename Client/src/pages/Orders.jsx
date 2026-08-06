@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Filter, Package, Truck, CheckCircle, XCircle, Download, X, Clock } from "lucide-react";
+import {
+  Filter,
+  Package,
+  Truck,
+  CheckCircle,
+  XCircle,
+  Download,
+  X,
+  Clock,
+} from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
@@ -39,7 +48,7 @@ const Orders = () => {
 
   // Filter orders based on status
   const filterOrders = myOrders.filter(
-    (order) => statusFilter === "All" || order.order_status === statusFilter
+    (order) => statusFilter === "All" || order.order_status === statusFilter,
   );
 
   const getStatusIcon = (status) => {
@@ -55,7 +64,7 @@ const Orders = () => {
       default:
         return <Package className="w-5 h-5 text-yellow-500" />;
     }
-  }; 
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -72,7 +81,13 @@ const Orders = () => {
     }
   };
 
-  const statusArray = ["All", "Processing", "Shipped", "Delivered", "Cancelled"];
+  const statusArray = [
+    "All",
+    "Processing",
+    "Shipped",
+    "Delivered",
+    "Cancelled",
+  ];
 
   const getCancelTimer = (createdAt) => {
     const createdTime = new Date(createdAt).getTime();
@@ -173,14 +188,17 @@ const Orders = () => {
     <div className="min-h-screen pt-20">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">My Orders😍</h1>
-          <p className="text-muted-foreground">Track and manage your order history.</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            My Orders😍
+          </h1>
+          <p className="text-muted-foreground">
+            Track and manage your order history.
+          </p>
         </div>
 
         {/* STATUS FILTER */}
         <div className="glass-card p-4 mb-8">
           <div className="flex items-center space-x-4 flex-wrap">
-          
             <div className="flex items-center space-x-2">
               <Filter className="w-5 h-5 text-primary" />
               <span className="font-medium">Filter by status:</span>
@@ -195,40 +213,41 @@ const Orders = () => {
                     statusFilter === status
                       ? "gradient-primary text-primary-foreground"
                       : "glass-card hover:glow-on-hover text-foreground"
-                  }`} //for selected filter show 
+                  }`} //for selected filter show
                 >
                   {status}
                 </button>
               ))}
             </div>
-
           </div>
         </div>
 
         {/* ORDERS LIST */}
         {filterOrders.length === 0 ? (
-       
-       <div className="text-center glass-panel max-w-md mx-auto">
+          <div className="text-center glass-panel max-w-md mx-auto">
             <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-foreground mb-2">No Orders Found</h2>
+            <h2 className="text-xl font-semibold text-foreground mb-2">
+              No Orders Found
+            </h2>
             <p className="text-muted-foreground">
               {statusFilter === "All"
                 ? "You haven't placed any orders yet."
                 : `No orders with status "${statusFilter}" found.`}
             </p>
           </div>
-
         ) : (
           <div className="space-y-6">
             {filterOrders.map((order) => (
               <div key={order.id} className="glass-card p-6">
-               
                 {/* ORDER HEADER */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0">
                   <div>
-                    <h3 className="text-lg font-semibold text-foreground mb-1">Orders #{order.id}</h3>
+                    <h3 className="text-lg font-semibold text-foreground mb-1">
+                      Orders #{order.id}
+                    </h3>
                     <p className="text-muted-foreground">
-                      Placed on {new Date(order.created_at).toLocaleDateString()}
+                      Placed on{" "}
+                      {new Date(order.created_at).toLocaleDateString()}
                     </p>
                   </div>
 
@@ -237,7 +256,7 @@ const Orders = () => {
                       {getStatusIcon(order.order_status)}
                       <span
                         className={`px-3 py-1 rounded text-sm font-medium capitalize ${getStatusColor(
-                          order.order_status 
+                          order.order_status,
                         )}`}
                       >
                         {order.order_status}
@@ -246,13 +265,15 @@ const Orders = () => {
 
                     <div className="text-right">
                       <p className="text-sm text-muted-foreground">Total</p>
-                      <p className="text-xl font-bold text-primary">{formatINR(order.total_price)}</p>
+                      <p className="text-xl font-bold text-primary">
+                        {formatINR(order.total_price)}
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 {/* ORDER ITEMS */}
-                <div className="space-y-4"> 
+                <div className="space-y-4">
                   {/**order_items is from backend fetchMyOrder wla controller*/}
                   {order?.order_items?.map((item) => (
                     <div
@@ -265,11 +286,17 @@ const Orders = () => {
                         className="w-16 h-16 object-cover rounded-lg"
                       />
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-foreground truncate">{item.title}</h4>
-                        <p className="text-sm text-muted-foreground">Quantity: {item.quantity}</p>
+                        <h4 className="font-medium text-foreground truncate">
+                          {item.title}
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          Quantity: {item.quantity}
+                        </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-semibold text-foreground">{formatINR(item.price)}</p>
+                        <p className="font-semibold text-foreground">
+                          {formatINR(item.price)}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -310,12 +337,13 @@ const Orders = () => {
                     </button>
                   )}
 
-                  {order.order_status === "Processing" && getCancelTimer(order.created_at) && (
-                    <div className="px-4 py-2 bg-yellow-500/10 text-yellow-600 rounded-lg text-sm flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
-                      Cancel available for {getCancelTimer(order.created_at)}
-                    </div>
-                  )}
+                  {order.order_status === "Processing" &&
+                    getCancelTimer(order.created_at) && (
+                      <div className="px-4 py-2 bg-yellow-500/10 text-yellow-600 rounded-lg text-sm flex items-center gap-2">
+                        <Clock className="w-4 h-4" />
+                        Cancel available for {getCancelTimer(order.created_at)}
+                      </div>
+                    )}
 
                   {order.order_status === "Delivered" && (
                     <>

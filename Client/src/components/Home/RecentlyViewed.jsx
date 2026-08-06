@@ -14,7 +14,9 @@ const RecentlyViewed = () => {
     const fetchRecentProducts = async () => {
       setLoading(true);
       try {
-        const res = await axiosInstance.get(`/product/ids?ids=${ids.join(",")}`);
+        const res = await axiosInstance.get(
+          `/product/ids?ids=${ids.join(",")}`,
+        );
         setRecentProducts(res.data.products || []);
       } catch (error) {
         console.error("Failed to load recently viewed products", error);
@@ -30,7 +32,9 @@ const RecentlyViewed = () => {
     return (
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <p className="text-center text-muted-foreground">Loading recently viewed...</p>
+          <p className="text-center text-muted-foreground">
+            Loading recently viewed...
+          </p>
         </div>
       </section>
     );
@@ -42,8 +46,12 @@ const RecentlyViewed = () => {
     <section className="py-12">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-3xl font-bold text-foreground">Recently Viewed</h2>
-          <p className="text-muted-foreground">Quick access to products you checked last.</p>
+          <h2 className="text-3xl font-bold text-foreground">
+            Recently Viewed
+          </h2>
+          <p className="text-muted-foreground">
+            Quick access to products you checked last.
+          </p>
         </div>
       </div>
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">

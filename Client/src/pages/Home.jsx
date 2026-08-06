@@ -12,16 +12,15 @@ import Snowfall from "react-snowfall";
 import PromoStrip from "../components/Home/PromoStrip";
 const Index = () => {
   const { topRatedProducts, newProducts } = useSelector(
-    (state) => state.product
+    (state) => state.product,
   );
   return (
     <div className="min-h-screen">
-
       <Snowfall snowflakeCount={200} />
-    
+
       <PromoStrip />
       <HeroSlider />
-      
+
       <div className="container mx-auto px-4 pt-20">
         <CategoryGrid />
         <RecentlyViewed />

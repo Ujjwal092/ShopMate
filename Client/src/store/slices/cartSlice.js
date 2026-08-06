@@ -30,7 +30,7 @@ const cartSlice = createSlice({
       const { product, quantity } = action.payload; // Expecting payload to be an object with product and quantity
 
       const existingItem = state.cart.find(
-        (item) => item.product.id === product.id // Check if the product is already in the cart eg down
+        (item) => item.product.id === product.id, // Check if the product is already in the cart eg down
       );
 
       if (existingItem) {
@@ -44,14 +44,14 @@ const cartSlice = createSlice({
 
     removeFromCart(state, action) {
       state.cart = state.cart.filter(
-        (item) => item.product.id !== action.payload // Expecting payload to be the product ID to remove
+        (item) => item.product.id !== action.payload, // Expecting payload to be the product ID to remove
       );
       saveCartToStorage(state.cart);
     },
 
     updateCartQuantity(state, action) {
       const item = state.cart.find(
-        (item) => item.product.id === action.payload.id
+        (item) => item.product.id === action.payload.id,
       );
       if (item) {
         item.quantity = action.payload.quantity;

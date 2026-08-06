@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { ArrowLeft, Package, Truck, CheckCircle, XCircle, MapPin, Phone, Download } from "lucide-react";
+import {
+  ArrowLeft,
+  Package,
+  Truck,
+  CheckCircle,
+  XCircle,
+  MapPin,
+  Phone,
+  Download,
+} from "lucide-react";
 import { useSelector } from "react-redux";
 import { axiosInstance } from "../lib/axios";
 import { formatINR } from "../lib/currency";
@@ -59,8 +68,12 @@ const OrderDetails = () => {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
         <div className="text-center glass-panel p-8">
-          <h1 className="text-3xl font-bold text-foreground mb-4">Order not found</h1>
-          <p className="text-muted-foreground mb-6">We couldn’t find the requested order.</p>
+          <h1 className="text-3xl font-bold text-foreground mb-4">
+            Order not found
+          </h1>
+          <p className="text-muted-foreground mb-6">
+            We couldn’t find the requested order.
+          </p>
           <button
             onClick={() => navigateTo("/orders")}
             className="px-6 py-3 gradient-primary text-primary-foreground rounded-lg hover:glow-on-hover animate-smooth font-semibold"
@@ -77,11 +90,16 @@ const OrderDetails = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-foreground mb-1">Order Details</h1>
-            <p className="text-muted-foreground">Order #{order.id} placed on {new Date(order.created_at).toLocaleDateString()}</p>
+            <h1 className="text-3xl font-bold text-foreground mb-1">
+              Order Details
+            </h1>
+            <p className="text-muted-foreground">
+              Order #{order.id} placed on{" "}
+              {new Date(order.created_at).toLocaleDateString()}
+            </p>
           </div>
           <button
-            onClick={() => navigateTo('/orders')}
+            onClick={() => navigateTo("/orders")}
             className="inline-flex items-center gap-2 px-4 py-2 bg-secondary text-foreground rounded-lg hover:bg-accent animate-smooth"
           >
             <ArrowLeft className="w-4 h-4" /> Back to Orders
@@ -95,36 +113,69 @@ const OrderDetails = () => {
                 <p className="text-muted-foreground mb-2">Order Status</p>
                 <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 bg-secondary text-foreground">
                   {getStatusIcon(order.order_status)}
-                  <span className="font-semibold capitalize">{order.order_status}</span>
+                  <span className="font-semibold capitalize">
+                    {order.order_status}
+                  </span>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Total Paid</p>
-                <p className="text-2xl font-bold text-primary">{formatINR(order.total_price)}</p>
+                <p className="text-2xl font-bold text-primary">
+                  {formatINR(order.total_price)}
+                </p>
               </div>
             </div>
 
             <div className="space-y-4">
               <div className="border-b border-[hsla(var(--glass-border))] pb-4">
-                <h2 className="text-xl font-semibold text-foreground mb-3">Shipping Info</h2>
-                <p className="text-foreground">{order.shipping_info?.full_name}</p>
-                <p className="text-muted-foreground">{order.shipping_info?.address}</p>
-                <p className="text-muted-foreground">{order.shipping_info?.city}, {order.shipping_info?.state}, {order.shipping_info?.country} {order.shipping_info?.pincode}</p>
-                <p className="text-muted-foreground flex items-center gap-2"><Phone className="w-4 h-4" /> {order.shipping_info?.phone}</p>
+                <h2 className="text-xl font-semibold text-foreground mb-3">
+                  Shipping Info
+                </h2>
+                <p className="text-foreground">
+                  {order.shipping_info?.full_name}
+                </p>
+                <p className="text-muted-foreground">
+                  {order.shipping_info?.address}
+                </p>
+                <p className="text-muted-foreground">
+                  {order.shipping_info?.city}, {order.shipping_info?.state},{" "}
+                  {order.shipping_info?.country} {order.shipping_info?.pincode}
+                </p>
+                <p className="text-muted-foreground flex items-center gap-2">
+                  <Phone className="w-4 h-4" /> {order.shipping_info?.phone}
+                </p>
               </div>
 
               <div className="border-b border-[hsla(var(--glass-border))] pb-4">
-                <h2 className="text-xl font-semibold text-foreground mb-3">Order Items</h2>
+                <h2 className="text-xl font-semibold text-foreground mb-3">
+                  Order Items
+                </h2>
                 <div className="space-y-4">
                   {order.order_items?.map((item) => (
-                    <div key={item.product_id} className="flex items-center gap-4 p-4 bg-secondary/50 rounded-lg">
-                      <img src={item.image} alt={item.title} className="w-20 h-20 object-cover rounded-lg" />
+                    <div
+                      key={item.product_id}
+                      className="flex items-center gap-4 p-4 bg-secondary/50 rounded-lg"
+                    >
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-20 h-20 object-cover rounded-lg"
+                      />
                       <div className="flex-1 min-w-0">
-                        <Link to={`/product/${item.product_id}`} className="font-semibold text-foreground hover:text-primary transition-colors">{item.title}</Link>
-                        <p className="text-sm text-muted-foreground">Quantity: {item.quantity}</p>
+                        <Link
+                          to={`/product/${item.product_id}`}
+                          className="font-semibold text-foreground hover:text-primary transition-colors"
+                        >
+                          {item.title}
+                        </Link>
+                        <p className="text-sm text-muted-foreground">
+                          Quantity: {item.quantity}
+                        </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-lg font-semibold text-foreground">{formatINR(item.price)}</p>
+                        <p className="text-lg font-semibold text-foreground">
+                          {formatINR(item.price)}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -142,7 +193,11 @@ const OrderDetails = () => {
               </div>
               <div className="flex justify-between text-sm text-muted-foreground">
                 <span>Shipping</span>
-                <span>{order.shipping_price === 0 ? "Free" : formatINR(order.shipping_price)}</span>
+                <span>
+                  {order.shipping_price === 0
+                    ? "Free"
+                    : formatINR(order.shipping_price)}
+                </span>
               </div>
               <div className="border-t border-[hsla(var(--glass-border))] pt-4 mt-4 flex justify-between font-semibold text-foreground">
                 <span>Grand Total</span>
@@ -151,8 +206,12 @@ const OrderDetails = () => {
             </div>
 
             <div className="rounded-2xl bg-primary/10 p-4">
-              <p className="font-semibold text-foreground mb-2">Delivery details</p>
-              <p className="text-sm text-muted-foreground">Your order is being processed and will be shipped shortly.</p>
+              <p className="font-semibold text-foreground mb-2">
+                Delivery details
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Your order is being processed and will be shipped shortly.
+              </p>
             </div>
 
             <Link

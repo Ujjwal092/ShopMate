@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-const Count = ({ end, duration = 2, suffix = '' }) => {
+const Count = ({ end, duration = 2, suffix = "" }) => {
   const [value, setValue] = useState(0);
 
   useEffect(() => {
@@ -11,9 +11,10 @@ const Count = ({ end, duration = 2, suffix = '' }) => {
       const elapsed = (now - start) / 1000;
       const progress = Math.min(elapsed / duration, 1);
       const current = end * progress;
-      const display = Number.isFinite(end) && !Number.isInteger(end)
-        ? Math.round(current * 10) / 10
-        : Math.floor(current);
+      const display =
+        Number.isFinite(end) && !Number.isInteger(end)
+          ? Math.round(current * 10) / 10
+          : Math.floor(current);
       setValue(display);
       if (progress < 1) rafId = requestAnimationFrame(tick);
     };
@@ -22,7 +23,12 @@ const Count = ({ end, duration = 2, suffix = '' }) => {
     return () => cancelAnimationFrame(rafId);
   }, [end, duration]);
 
-  return <>{value}{suffix}</>;
+  return (
+    <>
+      {value}
+      {suffix}
+    </>
+  );
 };
 
 const Stat = ({ end, suffix, label }) => (

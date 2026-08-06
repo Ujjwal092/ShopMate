@@ -22,19 +22,19 @@ router.get(
   "/admin/getall",
   isAuthenticated,
   authorizedRoles("Admin"),
-  fetchAllOrders
+  fetchAllOrders,
 );
 router.put(
   "/admin/update/:orderId",
   isAuthenticated,
   authorizedRoles("Admin"),
-  updateOrderStatus
+  updateOrderStatus,
 );
 router.delete(
   "/admin/delete/:orderId",
   isAuthenticated,
   authorizedRoles("Admin"),
-  deleteOrder
+  deleteOrder,
 );
 
 export default router;

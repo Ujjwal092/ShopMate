@@ -11,7 +11,7 @@ export const fetchMyOrders = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
-  }
+  },
 );
 
 export const placeOrder = createAsyncThunk(
@@ -23,11 +23,11 @@ export const placeOrder = createAsyncThunk(
       return res.data;
     } catch (error) {
       toast.error(
-        error.response.data.message || "Failed to place order, try again."
+        error.response.data.message || "Failed to place order, try again.",
       );
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
-  }
+  },
 );
 
 export const cancelOrder = createAsyncThunk(
@@ -38,14 +38,12 @@ export const cancelOrder = createAsyncThunk(
       toast.success(res.data.message);
       return res.data.updatedOrder;
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to cancel order."
-      );
+      toast.error(error.response?.data?.message || "Failed to cancel order.");
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Failed to cancel order."
+        error.response?.data?.message || "Failed to cancel order.",
       );
     }
-  }
+  },
 );
 
 const orderSlice = createSlice({
@@ -75,7 +73,6 @@ const orderSlice = createSlice({
       .addCase(fetchMyOrders.rejected, (state) => {
         state.fetchingOrders = false;
       })
-
 
       .addCase(placeOrder.pending, (state) => {
         state.placingOrder = true;

@@ -19,7 +19,6 @@ const PaymentForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); //after summit page will not refresh and in last we used a button to summit
-    
 
     if (!stripe || !elements) return;
     if (!clientSecret) {
@@ -38,9 +37,12 @@ const PaymentForm = () => {
     }
 
     try {
-      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: { card: cardElement },
-      });
+      const { error, paymentIntent } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: { card: cardElement },
+        },
+      );
 
       if (error) {
         setErrorMessage(error.message);

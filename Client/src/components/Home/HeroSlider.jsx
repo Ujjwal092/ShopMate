@@ -53,9 +53,9 @@ const HeroSlider = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
-  const variant = getVariant('hero');
+  const variant = getVariant("hero");
   const slide = slides[currentSlide];
-  const ctaText = variant === 'B' ? slide.cta + " - Extra 5%" : slide.cta;
+  const ctaText = variant === "B" ? slide.cta + " - Extra 5%" : slide.cta;
 
   return (
     <div className="relative h-[70vh] overflow-hidden rounded-2xl">

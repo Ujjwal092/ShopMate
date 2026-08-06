@@ -27,7 +27,7 @@ const Payment = () => {
 
   useEffect(() => {
     loadStripe(
-      "pk_test_51SwRXIF1eM3Ub3VgT0NlO1kvJ9q0CW9OOZUDyMUMRh5kdcxK1fA1qrgNmZIPwGShvQnjGvsmWwq4oEI3Q7VnDnuh00YGWkX8dI"
+      "pk_test_51SwRXIF1eM3Ub3VgT0NlO1kvJ9q0CW9OOZUDyMUMRh5kdcxK1fA1qrgNmZIPwGShvQnjGvsmWwq4oEI3Q7VnDnuh00YGWkX8dI",
     )
       .then((stripe) => setStripePromise(stripe))
       .catch((err) => console.log(err));
@@ -37,7 +37,7 @@ const Payment = () => {
 
   const total = cart.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
-    0
+    0,
   );
 
   let totalWithTax = total + total * 0.18;
@@ -87,9 +87,8 @@ const Payment = () => {
       <div className="min-h-screen pt-20">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
-           
             {/* HEADER */}
-           
+
             <div className="flex items-center space-x-4 mb-8">
               <Link
                 to={"/cart"}
@@ -101,7 +100,6 @@ const Payment = () => {
 
             {/* PROGRESS STEPS */}
             <div className="flex items-center justify-center mb-12">
-             
               <div className="flex items-center space-x-4">
                 {/* STEP 1 if details filled mark it tick and proceed to cards section */}
                 <div
@@ -148,28 +146,23 @@ const Payment = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
               {/* FORM SECTION */}
               <div className="lg:col-span-2">
-              
-                {orderStep === 1 ? 
-                (
+                {orderStep === 1 ? (
                   /* STEP 1: USER DETAILS */
                   <form onSubmit={handlePlaceOrder} className="glass-panel">
-                  
                     <h2 className="text-xl font-semibold text-foreground mb-6">
                       Shipping Information
                     </h2>
 
                     {/**full name */}
                     <div className="mb-6">
-                     
                       <div>
-                      
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          Full Name <span className="text-red-500 text-bold">*</span>
+                          Full Name{" "}
+                          <span className="text-red-500 text-bold">*</span>
                         </label>
-                      
+
                         <input
                           type="text"
                           required
@@ -177,7 +170,7 @@ const Payment = () => {
                           onChange={(e) => {
                             setShippingDetails({
                               ...shippingDetails,
-                              fullName: e.target.value, 
+                              fullName: e.target.value,
                             });
                           }}
                           className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground"
@@ -185,12 +178,13 @@ const Payment = () => {
                       </div>
                     </div>
 
-                         {/**state field*/}  
+                    {/**state field*/}
 
                     <div className=" flex md:flex-col gap-4 mb-4">
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          State <span className="text-red-500 text-bold">*</span>
+                          State{" "}
+                          <span className="text-red-500 text-bold">*</span>
                         </label>
                         <select
                           value={shippingDetails.state}
@@ -206,25 +200,18 @@ const Payment = () => {
                           <option value="Punjab">Punjab</option>
                           <option value="Bombay">Bombay</option>
                           <option value="Karnataka">Karnataka</option>
-                          <option value="Tamil Nadu">
-                            Tamil Nadu
-                          </option>
-                          <option value="Kolkata">
-                            Kolkata
-                          </option>
-                          <option value="Bihar">
-                            Bihar
-                          </option>
-                          <option value="Jharkhand">
-                            Jharkhand
-                          </option>
+                          <option value="Tamil Nadu">Tamil Nadu</option>
+                          <option value="Kolkata">Kolkata</option>
+                          <option value="Bihar">Bihar</option>
+                          <option value="Jharkhand">Jharkhand</option>
                         </select>
                       </div>
-                        
-                          {/**phone field*/}  
+
+                      {/**phone field*/}
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          Phone <span className="text-red-500 text-bold">*</span>
+                          Phone{" "}
+                          <span className="text-red-500 text-bold">*</span>
                         </label>
                         <input
                           type="tel"
@@ -239,15 +226,15 @@ const Payment = () => {
                           className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground"
                         />
                       </div>
-
                     </div>
 
-                          {/**address field*/}  
+                    {/**address field*/}
 
                     <div className="mb-4">
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          Address <span className="text-red-500 text-bold">*</span>
+                          Address{" "}
+                          <span className="text-red-500 text-bold">*</span>
                         </label>
                         <input
                           type="text"
@@ -263,8 +250,8 @@ const Payment = () => {
                         />
                       </div>
                     </div>
-                
-                  {/**city field + zip code + country*/}  
+
+                    {/**city field + zip code + country*/}
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                       <div>
@@ -284,10 +271,11 @@ const Payment = () => {
                           className="w-full px-4 py-3 bg-secondary border border-border rounded-lg text-foreground"
                         />
                       </div>
-                     
+
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          ZIP Code <span className="text-red-500 text-bold">*</span>
+                          ZIP Code{" "}
+                          <span className="text-red-500 text-bold">*</span>
                         </label>
                         <input
                           type="text"
@@ -305,7 +293,8 @@ const Payment = () => {
 
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
-                          Country <span className="text-red-500 text-bold">*</span>
+                          Country{" "}
+                          <span className="text-red-500 text-bold">*</span>
                         </label>
                         <select
                           value={shippingDetails.country}
@@ -328,11 +317,10 @@ const Payment = () => {
                     >
                       Continue to Payment
                     </button>
-
                   </form>
-                ) //ternary end here 
-                
-                : (
+                ) : (
+                  //ternary end here
+
                   <>
                     <Elements stripe={stripePromise}>
                       <PaymentForm />
@@ -369,7 +357,9 @@ const Payment = () => {
                             </p>
                           </div>
                           <p className="text-sm font-semibold">
-                                                      {formatINR(Number(item.product.price) * item.quantity)}
+                            {formatINR(
+                              Number(item.product.price) * item.quantity,
+                            )}
                           </p>
                         </div>
                       );
@@ -395,7 +385,7 @@ const Payment = () => {
                     <div className="flex justify-between font-semibold text-lg pt-2 border-t border-[hsla(var(--glass-border))]">
                       <span>Total Price</span>
                       <span className="text-primary">
-                                              {formatINR(totalWithTax)}
+                        {formatINR(totalWithTax)}
                       </span>
                     </div>
                   </div>

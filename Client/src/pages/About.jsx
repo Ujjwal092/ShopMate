@@ -1,5 +1,5 @@
 import { Users, Target, Award, Heart } from "lucide-react";
-"use client";
+("use client");
 
 const About = () => {
   const values = [
@@ -30,10 +30,7 @@ const About = () => {
       <div className="max-w-6xl mx-auto px-4 py-16">
         {/* Header */}
         <div className="text-center mb-16">
-         
-          <h1
-            className="text-4xl font-bold text-foreground mb-6"
-          >
+          <h1 className="text-4xl font-bold text-foreground mb-6">
             About CartSyy
           </h1>
 
@@ -43,7 +40,8 @@ const About = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            Your trusted e-commerce platform for quality products and exceptional service.
+            Your trusted e-commerce platform for quality products and
+            exceptional service.
           </p>
         </div>
 
@@ -68,7 +66,7 @@ const About = () => {
               <h3 className="text-xl font-semibold text-foreground mb-2">
                 {value.title}
               </h3>
-              
+
               <p className="text-muted-foreground">{value.description}</p>
             </motion.div>
           ))}

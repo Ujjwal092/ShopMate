@@ -242,7 +242,8 @@ const ProductDetail = () => {
                           📩 Notify me when available
                         </h3>
                         <p className="text-sm text-muted-foreground mb-4">
-                          Out of stock now, but we'll email you as soon as it's back!
+                          Out of stock now, but we'll email you as soon as it's
+                          back!
                         </p>
 
                         <form

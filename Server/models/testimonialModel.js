@@ -21,7 +21,13 @@ export const createTestimonialTable = async () => {
   }
 };
 
-export const createTestimonial = async (name, email, product_id, rating, message) => {
+export const createTestimonial = async (
+  name,
+  email,
+  product_id,
+  rating,
+  message,
+) => {
   const res = await database.query(
     `INSERT INTO testimonials (name, email, product_id, rating, message, verified, featured) VALUES ($1,$2,$3,$4,$5,false,false) RETURNING *`,
     [name, email, product_id, rating, message],
@@ -30,12 +36,17 @@ export const createTestimonial = async (name, email, product_id, rating, message
 };
 
 export const getFeaturedTestimonials = async () => {
-  const res = await database.query(`SELECT * FROM testimonials WHERE featured = true ORDER BY created_at DESC LIMIT 10`);
+  const res = await database.query(
+    `SELECT * FROM testimonials WHERE featured = true ORDER BY created_at DESC LIMIT 10`,
+  );
   return res.rows;
 };
 
 export const getAllTestimonials = async (limit = 20, offset = 0) => {
-  const res = await database.query(`SELECT * FROM testimonials ORDER BY created_at DESC LIMIT $1 OFFSET $2`, [limit, offset]);
+  const res = await database.query(
+    `SELECT * FROM testimonials ORDER BY created_at DESC LIMIT $1 OFFSET $2`,
+    [limit, offset],
+  );
   return res.rows;
 };
 

@@ -9,8 +9,16 @@ export const submitTestimonial = async (req, res) => {
   if (!name || !email || !rating || !message) {
     return res.status(400).json({ success: false, message: "Missing fields" });
   }
-  const testimonial = await createTestimonial(name, email, productId || null, rating, message);
-  res.status(201).json({ success: true, testimonial, message: "Testimonial submitted" });
+  const testimonial = await createTestimonial(
+    name,
+    email,
+    productId || null,
+    rating,
+    message,
+  );
+  res
+    .status(201)
+    .json({ success: true, testimonial, message: "Testimonial submitted" });
 };
 
 export const fetchFeaturedTestimonials = async (req, res) => {

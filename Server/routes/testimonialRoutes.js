@@ -1,5 +1,9 @@
 import express from "express";
-import { submitTestimonial, fetchFeaturedTestimonials, fetchAllTestimonials } from "../controllers/testimonialController.js";
+import {
+  submitTestimonial,
+  fetchFeaturedTestimonials,
+  fetchAllTestimonials,
+} from "../controllers/testimonialController.js";
 
 const router = express.Router();
 
