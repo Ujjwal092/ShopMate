@@ -1,6 +1,7 @@
 import pkg from "pg";
 const { Pool } = pkg;
 import dotenv from "dotenv";
+
 dotenv.config({ path: "./.env" });
 
 const database = new Pool({
@@ -9,9 +10,11 @@ const database = new Pool({
   database: process.env.DB_NAME ?? "mern_ecommerce_store",
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
-  ssl: {
-    require: true,
-  },
+
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false,
 });
 
 export const connectDatabase = async () => {
