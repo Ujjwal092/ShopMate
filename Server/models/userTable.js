@@ -17,8 +17,9 @@ export async function createUserTable() {
     `;
     await database.query(query);
   } catch (error) {
-    console.error("❌ Failed To Create Users Table.", error);
-    process.exit(1);
+    console.error("❌ Failed To Create Users Table.");
+    console.error(error);
+    throw error;
   }
 }
 //jsonb is used to store json data in a binary format which makes it faster to process and query compared to regular json data type.
